@@ -27,17 +27,21 @@ class CoordinatesConverter:
         plane_width_idx = np.argmin([l1, l2])
         plane_width_vec = [e1, e2][plane_width_idx]
 
-        image_ratio = image_length/image_width
-        plane_ratio = plane_length/plane_width
+        image_ratio = image_length / image_width
+        plane_ratio = plane_length / plane_width
 
         mat = np.zeros((2, 3))
 
         if image_ratio > plane_ratio:
-            mat[image_length_idx] = plane_length_vec/image_length
-            mat[image_width_idx] = (plane_width_vec*plane_length)/(plane_width*image_length)
+            mat[image_length_idx] = plane_length_vec / image_length
+            mat[image_width_idx] = (plane_width_vec * plane_length) / (
+                plane_width * image_length
+            )
         else:
-            mat[image_width_idx] = plane_width_vec/image_width
-            mat[image_length_idx] = (plane_length_vec*plane_width)/(plane_length*image_width)
+            mat[image_width_idx] = plane_width_vec / image_width
+            mat[image_length_idx] = (plane_length_vec * plane_width) / (
+                plane_length * image_width
+            )
 
         self.mat = mat.T
         self.origin = origin.T
@@ -48,4 +52,3 @@ class CoordinatesConverter:
         points -- numpy array of shape (2, number_of_points)
         """
         return np.dot(self.mat, points) + self.origin
-

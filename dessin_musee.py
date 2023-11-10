@@ -25,25 +25,54 @@ draw = sort_point_groups(draw)
 idx = 0
 
 for group in draw:
-    
     new_points = converter.convert(group.T)
-    
-    percentage = idx/len(draw)
-    print(int(percentage*100))
-    
+
+    percentage = idx / len(draw)
+    print(int(percentage * 100))
+
     x = new_points[0, 0]
     y = new_points[1, 0]
     z = new_points[2, 0]
-    
-    arm.set_position(x=x, y=y, z=z+2, roll=180, pitch=0, yaw=0, speed=100, is_radian=0, wait=True, radius=None, relative= False)
 
-    for i in range(0,new_points.shape[1]):
-        
+    arm.set_position(
+        x=x,
+        y=y,
+        z=z + 2,
+        roll=180,
+        pitch=0,
+        yaw=0,
+        speed=100,
+        is_radian=0,
+        wait=True,
+        radius=None,
+        relative=False,
+    )
+
+    for i in range(0, new_points.shape[1]):
         x = new_points[0, i]
         y = new_points[1, i]
         z = new_points[2, i]
-        arm.set_position_aa([x, y, z, 180, 0, 0], speed=100, is_radian=0, wait=False,radius = None, relative = False, mvacc=2000)
-        
-    idx+=1
-    arm.set_position(x=0, y=0, z=2, roll=0, pitch=0, yaw=0, speed=100, is_radian=0, wait=True,radius = None, relative = True)
-  
+        arm.set_position_aa(
+            [x, y, z, 180, 0, 0],
+            speed=100,
+            is_radian=0,
+            wait=False,
+            radius=None,
+            relative=False,
+            mvacc=2000,
+        )
+
+    idx += 1
+    arm.set_position(
+        x=0,
+        y=0,
+        z=2,
+        roll=0,
+        pitch=0,
+        yaw=0,
+        speed=100,
+        is_radian=0,
+        wait=True,
+        radius=None,
+        relative=True,
+    )

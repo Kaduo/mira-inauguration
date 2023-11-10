@@ -6,13 +6,15 @@ from xarm.wrapper import XArmAPI
 from utils import find_surface
 import numpy as np
 
-ip1 = '192.168.1.207'
-ip2 = '192.168.1.213'
+ip1 = "192.168.1.207"
+ip2 = "192.168.1.213"
 
 ips = {"photomaton": ip1, "big_drawing": ip2}
 
+
 def get_ip(ip_index):
     return ips[ip_index]
+
 
 def get_arm(ip):
     arm = XArmAPI(ip, is_radian=True)
@@ -21,8 +23,10 @@ def get_arm(ip):
     arm.set_state(state=0)
     return arm
 
+
 def get_photomaton_arm():
     return get_arm(get_ip("photomaton"))
+
 
 def get_big_drawing_arm():
     return get_arm(get_ip("big_drawing"))
@@ -33,16 +37,24 @@ def calibrate(arm, origin, p1, p2):
     Ry = 0
     Rz = 0
 
-    calibrated_origin, _ = find_surface(arm, origin[0], origin[1], origin[2], Rx, Ry, Rz)[:3].reshape((1,-1))
-    calibrated_p1, _ = find_surface(arm, p1[0], p1[1], p1[2], Rx, Ry, Rz)[:3].reshape((1,-1))
-    calibrated_p2, _ = find_surface(arm, p2[0], p2[1], p2[2], Rx, Ry, Rz)[:3].reshape((1,-1))
+    calibrated_origin, _ = find_surface(
+        arm, origin[0], origin[1], origin[2], Rx, Ry, Rz
+    )[:3].reshape((1, -1))
+    calibrated_p1, _ = find_surface(arm, p1[0], p1[1], p1[2], Rx, Ry, Rz)[:3].reshape(
+        (1, -1)
+    )
+    calibrated_p2, _ = find_surface(arm, p2[0], p2[1], p2[2], Rx, Ry, Rz)[:3].reshape(
+        (1, -1)
+    )
 
     return calibrated_origin, calibrated_p1, calibrated_p2
+
 
 def calibrate_from_dimensions(arm, origin, dx, dy):
     p1 = origin + np.array([dx, 0, 0])
     p2 = origin + np.array([0, dy, 0])
     return calibrate(arm, origin, p1, p2)
+
 
 def draw_point_group(arm, point_group, dz=2, speed=100):
     """
@@ -61,19 +73,55 @@ def draw_point_group(arm, point_group, dz=2, speed=100):
     x = point_group[0, 0]
     y = point_group[1, 0]
     z = point_group[2, 0]
-    
-    arm.set_position(x=x, y=y, z=z+dz, roll=180, pitch=0, yaw=0, speed=speed, is_radian=0, wait=True, radius = None, relative = False)
 
+    # Put pen in position, above the start point
+    arm.set_position(
+        x=x,
+        y=y,
+        z=z + dz,
+        roll=180,
+        pitch=0,
+        yaw=0,
+        speed=speed,
+        is_radian=0,
+        wait=True,
+        radius=None,
+        relative=False,
+    )
+
+    # Draw
     for i in range(0, point_group.shape[1]):
-        
         x = point_group[0, i]
         y = point_group[1, i]
         z = point_group[2, i]
-        arm.set_position_aa([x, y, z, 180, 0, 0], speed=speed, is_radian=0, wait=False, radius = None, relative = False, mvacc=2000)
 
-    arm.set_position(x=0, y=0, z=2, roll=0, pitch=0, yaw=0, speed=speed, is_radian=0, wait=True, radius = None, relative = True)
+        arm.set_position_aa(
+            [x, y, z, 180, 0, 0],
+            speed=speed,
+            is_radian=0,
+            wait=False,
+            radius=None,
+            relative=False,
+            mvacc=2000,
+        )
+
+    # Lift pen
+    arm.set_position(
+        x=0,
+        y=0,
+        z=2,
+        roll=0,
+        pitch=0,
+        yaw=0,
+        speed=speed,
+        is_radian=0,
+        wait=True,
+        radius=None,
+        relative=True,
+    )
 
     return len(point_group)
+
 
 def draw_point_groups(arm, point_groups, dz=2, verbose=True, speed=100):
     """

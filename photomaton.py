@@ -14,6 +14,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
+
 import os
 import sys
 import time
@@ -21,7 +22,7 @@ import pickle
 
 
 from xarm.wrapper import XArmAPI
-from utils import find_surface,absolute_coords,optimize_path,image_thresholding
+from utils import find_surface, absolute_coords, optimize_path, image_thresholding
 from numpy import linalg as LA
 from photo2drawing import grouping_edges, plotting_contours
 
@@ -30,9 +31,9 @@ import skimage as ski
 
 number_of_lines = 700
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
-file = open('mira_coords.pkl','rb')
+file = open("mira_coords.pkl", "rb")
 mira_data = pickle.load(file)
 
 if len(sys.argv) >= 2:
@@ -40,67 +41,89 @@ if len(sys.argv) >= 2:
 else:
     try:
         from configparser import ConfigParser
+
         parser = ConfigParser()
-        parser.read('../robot.conf')
-        ip = parser.get('xArm', 'ip')
+        parser.read("../robot.conf")
+        ip = parser.get("xArm", "ip")
     except:
-        ip = '192.168.1.207'
+        ip = "192.168.1.207"
         if not ip:
-            print('input error, exit')
+            print("input error, exit")
             sys.exit(1)
 
 
-selected =0
+selected = 0
 cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
 while True:
     while selected == 0:
-        
         ret, frame = cap.read()
         frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-        frame = frame[frame.shape[0]//2:,:].copy()
-        im = cv2.putText(frame, 'Portrait robot !', (300,100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 0), 2, cv2.LINE_AA)
-        cv2.imshow('MIRA', im)
+        frame = frame[frame.shape[0] // 2 :, :].copy()
+        im = cv2.putText(
+            frame,
+            "Portrait robot !",
+            (300, 100),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            2,
+            (0, 0, 0),
+            2,
+            cv2.LINE_AA,
+        )
+        cv2.imshow("MIRA", im)
         key = cv2.waitKey(1) & 0xFF
-        if key == ord('c'):
-            
-            for i in range(100,0,-1):
-                im = cv2.putText(frame, f'{round(i/30)}', (int(frame.shape[1]/2),int(frame.shape[0]/2)), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 5, (0, 0, 0), 2, cv2.LINE_AA)
-                cv2.imshow('MIRA', im)
+        if key == ord("c"):
+            for i in range(100, 0, -1):
+                im = cv2.putText(
+                    frame,
+                    f"{round(i/30)}",
+                    (int(frame.shape[1] / 2), int(frame.shape[0] / 2)),
+                    cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+                    5,
+                    (0, 0, 0),
+                    2,
+                    cv2.LINE_AA,
+                )
+                cv2.imshow("MIRA", im)
                 key = cv2.waitKey(1) & 0xFF
                 time.sleep(0.01)
                 ret, frame = cap.read()
                 frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                frame = frame[frame.shape[0]//2:,:].copy()
+                frame = frame[frame.shape[0] // 2 :, :].copy()
 
-
-            cv2.imshow('MIRA', frame)
+            cv2.imshow("MIRA", frame)
             key = cv2.waitKey(1) & 0xFF
-            cv2.imwrite('image.jpg',frame)
-            selected=1
-        if key == ord('e'):
-            cv2.destroyWindow('MIRA')
+            cv2.imwrite("image.jpg", frame)
+            selected = 1
+        if key == ord("e"):
+            cv2.destroyWindow("MIRA")
             break
-    image = ski.io.imread('image.jpg')
+    image = ski.io.imread("image.jpg")
 
-    edge,draw = grouping_edges(image, number_of_lines)
-    edge = np.array(edge, dtype=np.uint8)*255
+    edge, draw = grouping_edges(image, number_of_lines)
+    edge = np.array(edge, dtype=np.uint8) * 255
     image_edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)
-    superimposed = cv2.addWeighted(image_edge,0.5,image,0.5,0)
-    im = cv2.putText(superimposed, 'dessin en cours...', (int(frame.shape[1]/2)-300,int(frame.shape[0])-100), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 3, (0, 0, 0), 2, cv2.LINE_AA)
+    superimposed = cv2.addWeighted(image_edge, 0.5, image, 0.5, 0)
+    im = cv2.putText(
+        superimposed,
+        "dessin en cours...",
+        (int(frame.shape[1] / 2) - 300, int(frame.shape[0]) - 100),
+        cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+        3,
+        (0, 0, 0),
+        2,
+        cv2.LINE_AA,
+    )
 
-    #print(image_edge.shape)
-    cv2.imshow('MIRA', im)
+    # print(image_edge.shape)
+    cv2.imshow("MIRA", im)
     key = cv2.waitKey(1) & 0xFF
-
-
 
     arm = XArmAPI(ip, is_radian=True)
     arm.motion_enable(enable=True)
     arm.set_mode(0)
     arm.set_state(state=0)
-
 
     x0 = 420
     y0 = 60
@@ -109,24 +132,23 @@ while True:
     Ry0 = 0
     Rz0 = 0
 
-    point2,torques2 = find_surface(arm,x0,y0,z0,Rx0,Ry0,Rz0)
+    point2, torques2 = find_surface(arm, x0, y0, z0, Rx0, Ry0, Rz0)
     plt.figure(2)
     plt.plot(torques2)
 
     x0 = 420
     y0 = -60
 
-    point3,torques3 = find_surface(arm,x0,y0,z0,Rx0,Ry0,Rz0)
+    point3, torques3 = find_surface(arm, x0, y0, z0, Rx0, Ry0, Rz0)
     plt.figure(1)
     plt.plot(torques3)
-
 
     x0 = 300
     y0 = 60
 
     torques = []
 
-    point1,torques1 = find_surface(arm,x0,y0,z0,Rx0,Ry0,Rz0)
+    point1, torques1 = find_surface(arm, x0, y0, z0, Rx0, Ry0, Rz0)
     plt.figure(3)
     plt.plot(torques1)
 
@@ -138,35 +160,63 @@ while True:
     print(point2)
     print(point3)
 
-
-        
     abs_coords = absolute_coords(x0, y0, z0, x1, y1, z1, x2, y2, z2)
 
-    idx=0
-            
+    idx = 0
+
     for group in draw:
-        
         new_points = abs_coords.convert(group.T)
-            
-        percentage = idx/len(draw)
-        print(int(percentage*100))
-        
+
+        percentage = idx / len(draw)
+        print(int(percentage * 100))
+
         x = new_points[0, 0]
         y = new_points[1, 0]
         z = new_points[2, 0]
-        
-        arm.set_position(x=x, y=y, z=z+2, roll=180, pitch=0, yaw=0, speed=100, is_radian=0, wait=True,radius = None, relative = False)
-            
-        for i in range(0,new_points.shape[1]):
-            
+
+        arm.set_position(
+            x=x,
+            y=y,
+            z=z + 2,
+            roll=180,
+            pitch=0,
+            yaw=0,
+            speed=100,
+            is_radian=0,
+            wait=True,
+            radius=None,
+            relative=False,
+        )
+
+        for i in range(0, new_points.shape[1]):
             x = new_points[0, i]
             y = new_points[1, i]
             z = new_points[2, i]
-            arm.set_position_aa([x, y, z, 180, 0, 0], speed=100, is_radian=0, wait=False,radius = None, relative = False,mvacc=2000)
-            
-        idx+=1
-        arm.set_position(x=0, y=0, z=2, roll=0, pitch=0, yaw=0, speed=100, is_radian=0, wait=True,radius = None, relative = True)
-    
+            arm.set_position_aa(
+                [x, y, z, 180, 0, 0],
+                speed=100,
+                is_radian=0,
+                wait=False,
+                radius=None,
+                relative=False,
+                mvacc=2000,
+            )
+
+        idx += 1
+        arm.set_position(
+            x=0,
+            y=0,
+            z=2,
+            roll=0,
+            pitch=0,
+            yaw=0,
+            speed=100,
+            is_radian=0,
+            wait=True,
+            radius=None,
+            relative=True,
+        )
+
     for letter in mira_data:
         data = np.array(mira_data[letter])
         data = np.array([data.T[1], data.T[0]])
@@ -180,43 +230,73 @@ while True:
                 ma = maybe_ma
             if mi is None or maybe_mi < mi:
                 mi = maybe_mi
-        data = (data-mi)/(ma - mi)
+        data = (data - mi) / (ma - mi)
         print(data)
         data /= 4
-        data[1] += image.shape[0]/max(image.shape[0], image.shape[1]) + 0.04
+        data[1] += image.shape[0] / max(image.shape[0], image.shape[1]) + 0.04
         # data[1] -= 0.3
-        data[0] += 1 - 1/4
+        data[0] += 1 - 1 / 4
         new_points = abs_coords.convert(data)
         x = new_points[0, 0]
         y = new_points[1, 0]
         z = new_points[2, 0]
-        arm.set_position(x=x, y=y, z=z+2, roll=180, pitch=0, yaw=0, speed=100, is_radian=0, wait=True,radius = None, relative = False)
-        
-        for i in range(0, new_points.shape[1]+1):
-            idx = i%new_points.shape[1]
+        arm.set_position(
+            x=x,
+            y=y,
+            z=z + 2,
+            roll=180,
+            pitch=0,
+            yaw=0,
+            speed=100,
+            is_radian=0,
+            wait=True,
+            radius=None,
+            relative=False,
+        )
+
+        for i in range(0, new_points.shape[1] + 1):
+            idx = i % new_points.shape[1]
             x = new_points[0, idx]
             y = new_points[1, idx]
             z = new_points[2, idx]
-            arm.set_position_aa([x, y, z, 180, 0, 0], speed=10, is_radian=0, wait=True,radius = None, relative = False)
-            
-        idx+=1
-        arm.set_position(x=0, y=0, z=2, roll=0, pitch=0, yaw=0, speed=25, is_radian=0, wait=True,radius = None, relative = True)
-        
-            
-    arm.set_position(x=250, y=0, z=z+20, roll=180, pitch=0, yaw=0, speed=50, is_radian=0, wait=True,radius = None, relative = False)
-            
-    selected=0
- # R_mira = np.array([x_new,y_new])
- # new_points = abs_coords.convert(R_mira)
+            arm.set_position_aa(
+                [x, y, z, 180, 0, 0],
+                speed=10,
+                is_radian=0,
+                wait=True,
+                radius=None,
+                relative=False,
+            )
 
+        idx += 1
+        arm.set_position(
+            x=0,
+            y=0,
+            z=2,
+            roll=0,
+            pitch=0,
+            yaw=0,
+            speed=25,
+            is_radian=0,
+            wait=True,
+            radius=None,
+            relative=True,
+        )
 
+    arm.set_position(
+        x=250,
+        y=0,
+        z=z + 20,
+        roll=180,
+        pitch=0,
+        yaw=0,
+        speed=50,
+        is_radian=0,
+        wait=True,
+        radius=None,
+        relative=False,
+    )
 
-
-
-
-
-
-
-
-
-
+    selected = 0
+# R_mira = np.array([x_new,y_new])
+# new_points = abs_coords.convert(R_mira)
