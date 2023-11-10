@@ -2,8 +2,6 @@ import sys
 import os
 from xarm.wrapper import XArmAPI
 
-
-
 ip1 = '192.168.1.207'
 ip2 = '192.168.1.213'
 
