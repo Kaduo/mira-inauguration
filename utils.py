@@ -137,7 +137,7 @@ def optimize_path(input_data,threshold):
     compression = len(new_data)/len(input_data)
     return new_data,compression
 
-def sort_groups(groups):
+def sort_line_groups(groups):
     groups = groups.copy()
     new_groups = [groups.pop(0)]
     for _ in range(len(groups) - 1):

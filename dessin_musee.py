@@ -1,4 +1,4 @@
-from utils import coords_converter,sort_groups
+from utils import coords_converter,sort_line_groups
 import numpy as np
 from arms import get_big_drawing_arm, calibrate
 import skimage as ski
@@ -19,7 +19,7 @@ converter = coords_converter(list(reversed(image.shape[:2])), origin, p1, p2)
 
 _, draw = grouping_edges(image, 1000, rescale=False)
 
-draw = sort_groups(draw)
+draw = sort_line_groups(draw)
 
 idx = 0
 
