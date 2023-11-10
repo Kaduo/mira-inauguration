@@ -1,0 +1,5 @@
+*.jpeg
+*.jpg
+*.png
+*.pkl
+-points_mira.pkl
