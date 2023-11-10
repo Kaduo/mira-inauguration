@@ -17,7 +17,7 @@ import time
 import skimage as ski
 
 
-def find_surface(arm, x, y, z, Rx, Ry, Rz):
+def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, epsilon=1):
     torques = []
     arm.set_position(
         x=x,
@@ -75,7 +75,6 @@ def find_surface(arm, x, y, z, Rx, Ry, Rz):
         relative=False,
     )
     test3_torques = np.array(arm.joints_torque[0:6])
-    epsilon = 1
     mins = np.min([test1_torques, test2_torques, test3_torques, initial_torques], axis=0)
     maxs = np.max([test1_torques, test2_torques, test3_torques, initial_torques], axis=0)
     d = np.abs(maxs - mins)
