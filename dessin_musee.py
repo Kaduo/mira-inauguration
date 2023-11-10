@@ -1,4 +1,5 @@
-from utils import coords_converter,sort_point_groups
+from coordinates import CoordinatesConverter
+from utils import sort_point_groups
 import numpy as np
 from arms import get_big_drawing_arm, calibrate
 import skimage as ski
@@ -15,7 +16,7 @@ above_p2 = np.array([177,130, 137])
 origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2)
 
 image = ski.io.imread("st jerome.jpg")
-converter = coords_converter(list(reversed(image.shape[:2])), origin, p1, p2)
+converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
 
 _, draw = grouping_edges(image, 1000, rescale=False)
 
