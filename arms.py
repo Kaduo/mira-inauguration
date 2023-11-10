@@ -38,4 +38,4 @@ def calibrate(arm, origin, p1, p2):
 def calibrate_from_dimensions(arm, origin, dx, dy):
     p1 = origin + np.array([dx, 0, 0])
     p2 = origin + np.array([0, dy, 0])
-    return calibrate(origin, p1, p2)
+    return calibrate(arm, origin, p1, p2)
