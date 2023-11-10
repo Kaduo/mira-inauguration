@@ -1,3 +1,5 @@
+"""Functions to group edge pixels by walking along them."""
+
 from enum import Enum
 import itertools
 import numpy as np
@@ -86,7 +88,6 @@ def whole_edge(x,y,is_edge):
                 count += 1
                 res.insert(0, point)
 
-    #print(count)
     return res
 
 def group_edges(edge_image):
@@ -105,12 +106,10 @@ def group_edges(edge_image):
         return in_bounds(x,y) and edge_image[y,x] == 0 and visited[y,x] == 1
 
     visited = np.full(edge_image.shape, 1)
-    #print(visited.shape)
     diff = visited != edge_image
     where_diff = np.where(diff)
 
     while len(where_diff[0]) > 0:
-        #print(len(where_diff[0]))
         p = where_diff[0][0], where_diff[1][0]
         y,x = p[0], p[1]
         new_edge = whole_edge(x, y, is_edge)
@@ -129,6 +128,5 @@ def group_edges(edge_image):
 if __name__=="__main__":
     x, y = 0, 0
     for n in neighbors(x,y):
-        #print(n)
         continue
 
