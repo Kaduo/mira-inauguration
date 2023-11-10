@@ -1,9 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Tue Nov  7 11:05:09 2023
-
-@author: nicolas
+Image processing to turn an picture into an drawable sketch.
 """
 
 import skimage as ski
@@ -13,24 +9,40 @@ from skimage.morphology import skeletonize
 from edge_walker import group_edges
 
 
-def edging(image):
-    image = ski.color.rgb2gray(image)
-    image = ski.restoration.denoise_bilateral(image, sigma_color=0.05, sigma_spatial=2)
-    edge_image = ski.feature.canny(image)
-    edge_image = 1 - skeletonize(edge_image)
-    return edge_image
+def rgb2edges(image, plot=False):
+    """
+    Convert the RGB image into a binary image with only edges.
+    """
+    gray_image = ski.color.rgb2gray(image)
+    blurred_image = ski.restoration.denoise_bilateral(gray_image, sigma_color=0.05, sigma_spatial=2)
+    edge_image = ski.feature.canny(blurred_image)
+    skeletonized_image = 1 - skeletonize(edge_image)
 
-def grouping_edges(image, maximum_groups, rescale=True):
-    edge_image = edging(image)
+    if plot:
+        _, ((ax1, ax2, ax3), (ax4, ax5, _)) = plt.subplots(2, 3)
+        ax1.imshow(image)
+        ax1.set_title("1. Original image.")
+        ax2.imshow(gray_image)
+        ax2.set_title("2. Gray image.")
+        ax3.imshow(blurred_image)
+        ax3.set_title("3. Bilateral filter.")
+        ax4.imshow(edge_image)
+        ax4.set_title("4. Canny filter.")
+        ax5.imshow(skeletonized_image)
+        ax4.set_title("5. Skeletonize filter.")
+        plt.show()
+
+
+    return skeletonized_image
+
+def grouping_edges(image, maximum_groups, rescale=True, min_edge_length=10, step=5):
+    edge_image = rgb2edges(image)
     
     max_length=max(edge_image.shape[0], edge_image.shape[1])
     edge_groups = group_edges(edge_image)
     edge_group_lens = []
     for g in edge_groups:
         edge_group_lens.append(len(g))
-        
-    min_edge_length = 10
-    step = 5
     
     if rescale:
         max_length=max(image.shape[0], image.shape[1])

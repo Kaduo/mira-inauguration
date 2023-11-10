@@ -4,6 +4,12 @@ import numpy as np
 
 
 class CoordinatesConverter:
+    """
+    Arguments:
+    image_shape -- the dimensions of the original image: (height, width)
+    origin, point1, point2 -- numpy arrays of shape (3, 1)
+    """
+
     def __init__(self, image_shape, origin, point1, point2):
         image_length = max(image_shape)
         image_length_idx = np.argmax(image_shape)
@@ -37,5 +43,9 @@ class CoordinatesConverter:
         self.origin = origin.T
 
     def convert(self, points):
+        """
+        Arguments:
+        points -- numpy array of shape (2, number_of_points)
+        """
         return np.dot(self.mat, points) + self.origin
 
