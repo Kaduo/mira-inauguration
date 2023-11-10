@@ -29,7 +29,7 @@ def rgb2edges(image, plot=False):
         ax4.imshow(edge_image)
         ax4.set_title("4. Canny filter.")
         ax5.imshow(skeletonized_image)
-        ax4.set_title("5. Skeletonize filter.")
+        ax5.set_title("5. Skeletonize filter.")
         plt.show()
 
 
