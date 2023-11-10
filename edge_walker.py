@@ -93,9 +93,7 @@ def whole_edge(x, y, is_edge):
 
     count = 0
     if first_dir is not None:
-        for dir, point in move_along_edge(
-            x, y, is_edge, starting_dir=next_clockwise(first_dir)
-        ):
+        for dir, point in move_along_edge(x, y, is_edge, starting_dir=next_clockwise(first_dir)):
             if point in res:
                 break
             else:

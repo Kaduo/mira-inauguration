@@ -34,14 +34,10 @@ class CoordinatesConverter:
 
         if image_ratio > plane_ratio:
             mat[image_length_idx] = plane_length_vec / image_length
-            mat[image_width_idx] = (plane_width_vec * plane_length) / (
-                plane_width * image_length
-            )
+            mat[image_width_idx] = (plane_width_vec * plane_length) / (plane_width * image_length)
         else:
             mat[image_width_idx] = plane_width_vec / image_width
-            mat[image_length_idx] = (plane_length_vec * plane_width) / (
-                plane_length * image_width
-            )
+            mat[image_length_idx] = (plane_length_vec * plane_width) / (plane_length * image_width)
 
         self.mat = mat.T
         self.origin = origin.T

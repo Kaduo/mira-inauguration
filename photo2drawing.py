@@ -14,9 +14,7 @@ def rgb2edges(image, plot=False):
     Convert the RGB image into a binary image with only edges.
     """
     gray_image = ski.color.rgb2gray(image)
-    blurred_image = ski.restoration.denoise_bilateral(
-        gray_image, sigma_color=0.05, sigma_spatial=2
-    )
+    blurred_image = ski.restoration.denoise_bilateral(gray_image, sigma_color=0.05, sigma_spatial=2)
     edge_image = ski.feature.canny(blurred_image)
     skeletonized_image = 1 - skeletonize(edge_image)
 

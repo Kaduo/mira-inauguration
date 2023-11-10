@@ -37,15 +37,13 @@ def calibrate(arm, origin, p1, p2):
     Ry = 0
     Rz = 0
 
-    calibrated_origin, _ = find_surface(
-        arm, origin[0], origin[1], origin[2], Rx, Ry, Rz
-    )[:3].reshape((1, -1))
-    calibrated_p1, _ = find_surface(arm, p1[0], p1[1], p1[2], Rx, Ry, Rz)[:3].reshape(
-        (1, -1)
-    )
-    calibrated_p2, _ = find_surface(arm, p2[0], p2[1], p2[2], Rx, Ry, Rz)[:3].reshape(
-        (1, -1)
-    )
+    x0, y0, z0 = origin
+    x1, y1, z1 = p1
+    x2, y2, z2 = p2
+
+    calibrated_origin, _ = find_surface(arm, x0, y0, z0, Rx, Ry, Rz)[:3].reshape((1, -1))
+    calibrated_p1, _ = find_surface(arm, x1, y1, z1, Rx, Ry, Rz)[:3].reshape((1, -1))
+    calibrated_p2, _ = find_surface(arm, x2, y2, z2, Rx, Ry, Rz)[:3].reshape((1, -1))
 
     return calibrated_origin, calibrated_p1, calibrated_p2
 
@@ -135,7 +133,9 @@ def draw_point_groups(arm, point_groups, dz=2, verbose=True, speed=100):
 
     nb_points_drawn = 0
     nb_points = sum([len(group) for group in point_groups])
+
     for group in point_groups:
         nb_points_drawn += draw_point_group(arm, group, dz, speed)
+
         if verbose:
             print(f"{nb_points_drawn*100/nb_points}% complete...")
