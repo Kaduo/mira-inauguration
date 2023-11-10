@@ -10,9 +10,6 @@ import matplotlib.pyplot as plt
 from numpy import linalg as LA
 import numpy as np
 
-
-import os
-import sys
 import time
 import skimage as ski
 

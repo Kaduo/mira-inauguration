@@ -17,10 +17,10 @@ corner_peaks = ski.feature.corner_peaks(harris_image, threshold_rel=0.0000001)
 
 corners = np.array(corner_peaks).T
 
-fig,ax = plt.subplots(1,1)
+fig, ax = plt.subplots(1, 1)
 ax.imshow(image, cmap="gray")
 
-labels = {"m" : [], "i": [], "r":[], "a":[], ".": []}
+labels = {"m": [], "i": [], "r": [], "a": [], ".": []}
 
 letters = list(labels.keys())
 
@@ -32,12 +32,16 @@ for point in corners.T:
     for l in letters:
         for i, p in enumerate(labels[l]):
             ax.scatter(p[1], p[0])
-            ax.annotate(str(i), (p[1], p[0]), size=10, bbox=dict(boxstyle="square,pad=0.3",
-                      fc="lightblue", ec="steelblue", lw=2))
+            ax.annotate(
+                str(i),
+                (p[1], p[0]),
+                size=10,
+                bbox=dict(boxstyle="square,pad=0.3", fc="lightblue", ec="steelblue", lw=2),
+            )
 
-    ax.scatter(point[1], point[0])
-    ax.annotate("???", (point[1], point[0]), size=15, bbox=dict(boxstyle="square,pad=0.3",
-                      fc="lightblue", ec="steelblue", lw=2))
+    ax.scatter(point[1], point[0], c="red")
+    # ax.annotate("???", (point[1], point[0]), size=15, bbox=dict(boxstyle="square,pad=0.3",
+    #                   fc="lightblue", ec="steelblue", lw=2))
     plt.pause(0.01)
     fig.show()
     l = input("Lettre ?")

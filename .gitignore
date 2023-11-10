@@ -4,4 +4,4 @@
 *.pkl
 -points_mira.pkl
 *.JPG
-
+.venv/
