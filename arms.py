@@ -103,7 +103,7 @@ def draw_point_group(arm, point_group, dz=2, speed=100):
     arm.set_position(
         x=0,
         y=0,
-        z=2,
+        z=dz,
         roll=0,
         pitch=0,
         yaw=0,
