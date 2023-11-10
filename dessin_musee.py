@@ -5,32 +5,12 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import skimage as ski
+from arms import get_big_drawing_arm
+
 
 from photo2drawing import grouping_edges, plotting_contours
 
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
-
-if len(sys.argv) >= 2:
-    ip = sys.argv[1]
-else:
-    try:
-        from configparser import ConfigParser
-        parser = ConfigParser()
-        parser.read('../robot.conf')
-        ip = parser.get('xArm', 'ip')
-    except:
-        ip = '192.168.1.213'
-        if not ip:
-            print('input error, exit')
-            sys.exit(1)
-
-
-arm = XArmAPI(ip, is_radian=True)
-arm.motion_enable(enable=True)
-arm.set_mode(0)
-arm.set_state(state=0)
-
+arm = get_big_drawing_arm()
 
 # Origin
 
