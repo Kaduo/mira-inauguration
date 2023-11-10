@@ -1,78 +1,25 @@
 from xarm.wrapper import XArmAPI
 from utils import findWall,absolute_coords,optimize_path,image_thresholding,coords_converter,sort_groups
-import sys
-import os
 import matplotlib.pyplot as plt
 import numpy as np
+from arms import get_big_drawing_arm, calibrate
 import skimage as ski
-from arms import get_big_drawing_arm
 
 
-from photo2drawing import grouping_edges, plotting_contours
+from photo2drawing import grouping_edges
 
 arm = get_big_drawing_arm()
 
-# Origin
+above_origin = np.array([177, -118, 134])
+above_p1 = np.array([550, -118, 137])
+above_p2 = np.array([177,130, 137])
 
-x0 = 177
-y0 = -118
-z0 = 134
-Rx0 = 180
-Ry0 = 0
-Rz0 = 0
-
-point2,torques2 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
-plt.figure(2)
-plt.plot(torques2)
-
-x0 = 550
-y0 = -118
-z0 = 137
-
-point3,torques3 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
-plt.figure(1)
-plt.plot(torques3)
-
-
-x0 = 177
-y0 = 130
-z0 = 137
-
-torques = []
-
-point1,torques1 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
-plt.figure(3)
-plt.plot(torques1)
-
-print(point1)
-print(point2)
-print(point3)
-
-point1 = np.array(point1[:3]).reshape((1,-1))
-point2 = np.array(point2[:3]).reshape((1,-1))
-point3 = np.array(point3[:3]).reshape((1,-1))
-
-
-# first_line = converter.convert(np.array([[0,0], [200, 400]]).T)
-# last_line = converter.convert(np.array([[200,0], [0, 400]]).T)
-
-# print(first_line)
-# print(last_line)
-
-# for l in [first_line, last_line]:
-#     p1 = l[:,0]
-#     p2 = l[:,1]
-#     arm.set_position_aa([p1[0], p1[1], 140, 180, 0, 0], speed=100, is_radian=0, wait=True, radius = None, relative = False)
-#     arm.set_position_aa([p1[0], p1[1], p1[2], 180, 0, 0], speed=100, is_radian=0, wait=True, radius = None, relative = False)
-#     arm.set_position_aa([p2[0], p2[1], p2[2], 180, 0, 0], speed=100, is_radian=0, wait=True, radius = None, relative = False)
-#     arm.set_position_aa([p2[0], p2[1], 140, 180, 0, 0], speed=100, is_radian=0, wait=True, radius = None, relative = False)
+origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2)
 
 image = ski.io.imread("st jerome.jpg")
-converter = coords_converter(list(reversed(image.shape[:2])), point2, point1, point3)
+converter = coords_converter(list(reversed(image.shape[:2])), origin, p1, p2)
 
-print(image.shape)
-
-_,draw = grouping_edges(image, 1000, rescale=False)
+_, draw = grouping_edges(image, 1000, rescale=False)
 
 draw = sort_groups(draw)
 
