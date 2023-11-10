@@ -21,7 +21,7 @@ import pickle
 
 
 from xarm.wrapper import XArmAPI
-from utils import findWall,absolute_coords,optimize_path,image_thresholding
+from utils import find_surface,absolute_coords,optimize_path,image_thresholding
 from numpy import linalg as LA
 from photo2drawing import grouping_edges, plotting_contours
 
@@ -109,14 +109,14 @@ while True:
     Ry0 = 0
     Rz0 = 0
 
-    point2,torques2 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
+    point2,torques2 = find_surface(arm,x0,y0,z0,Rx0,Ry0,Rz0)
     plt.figure(2)
     plt.plot(torques2)
 
     x0 = 420
     y0 = -60
 
-    point3,torques3 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
+    point3,torques3 = find_surface(arm,x0,y0,z0,Rx0,Ry0,Rz0)
     plt.figure(1)
     plt.plot(torques3)
 
@@ -126,7 +126,7 @@ while True:
 
     torques = []
 
-    point1,torques1 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
+    point1,torques1 = find_surface(arm,x0,y0,z0,Rx0,Ry0,Rz0)
     plt.figure(3)
     plt.plot(torques1)
 

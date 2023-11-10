@@ -1,5 +1,5 @@
 from xarm.wrapper import XArmAPI
-from utils import findWall
+from utils import find_surface
 import numpy as np
 
 ip1 = '192.168.1.207'
@@ -29,9 +29,9 @@ def calibrate(arm, origin, p1, p2):
     Ry = 0
     Rz = 0
 
-    calibrated_origin, _ = findWall(arm, origin[0], origin[1], origin[2], Rx, Ry, Rz)[:3].reshape((1,-1))
-    calibrated_p1, _ = findWall(arm, p1[0], p1[1], p1[2], Rx, Ry, Rz)[:3].reshape((1,-1))
-    calibrated_p2, _ = findWall(arm, p2[0], p2[1], p2[2], Rx, Ry, Rz)[:3].reshape((1,-1))
+    calibrated_origin, _ = find_surface(arm, origin[0], origin[1], origin[2], Rx, Ry, Rz)[:3].reshape((1,-1))
+    calibrated_p1, _ = find_surface(arm, p1[0], p1[1], p1[2], Rx, Ry, Rz)[:3].reshape((1,-1))
+    calibrated_p2, _ = find_surface(arm, p2[0], p2[1], p2[2], Rx, Ry, Rz)[:3].reshape((1,-1))
 
     return calibrated_origin, calibrated_p1, calibrated_p2
 
