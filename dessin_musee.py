@@ -1,6 +1,4 @@
-from xarm.wrapper import XArmAPI
-from utils import findWall,absolute_coords,optimize_path,image_thresholding,coords_converter,sort_groups
-import matplotlib.pyplot as plt
+from utils import coords_converter,sort_groups
 import numpy as np
 from arms import get_big_drawing_arm, calibrate
 import skimage as ski
@@ -37,7 +35,7 @@ for group in draw:
     z = new_points[2, 0]
     
     arm.set_position(x=x, y=y, z=z+2, roll=180, pitch=0, yaw=0, speed=100, is_radian=0, wait=True,radius = None, relative = False)
-        
+
     for i in range(0,new_points.shape[1]):
         
         x = new_points[0, i]
