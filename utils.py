@@ -16,30 +16,6 @@ import sys
 import time
 import skimage as ski
 
-
-
-
-# from xarm.wrapper import XArmAPI
-
-# sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
-
-
-# if len(sys.argv) >= 2:
-#     ip = sys.argv[1]
-# else:
-#     try:
-#         from configparser import ConfigParser
-#         parser = ConfigParser()
-#         parser.read('../robot.conf')
-#         ip = parser.get('xArm', 'ip')
-#     except:
-#         ip = '192.168.1.207'
-#         if not ip:
-#             print('input error, exit')
-#             sys.exit(1)
-# ########################################################
-
-
 def findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0):
     torques = []
     arm.set_position(x=x0, y=y0, z=z0, roll=Rx0, pitch=Ry0, yaw=Rz0, speed=100, is_radian=0, wait=True,radius = None, relative = False)

@@ -48,7 +48,7 @@ else:
         if not ip:
             print('input error, exit')
             sys.exit(1)
-########################################################
+
 
 selected =0
 cap = cv2.VideoCapture(1)
