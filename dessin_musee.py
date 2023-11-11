@@ -1,9 +1,8 @@
 from coordinates import CoordinatesConverter
-from utils import sort_point_groups
+from utils import sort_edges
 import numpy as np
 from arms import get_big_drawing_arm, calibrate
 import skimage as ski
-
 
 from photo2drawing import grouping_edges
 
@@ -18,16 +17,16 @@ origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2)
 image = ski.io.imread("st jerome.jpg")
 converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
 
-_, draw = grouping_edges(image, 1000, rescale=False)
+_, edges = grouping_edges(image, 1000, rescale=False)
 
-draw = sort_point_groups(draw)
+edges = sort_edges(edges)
 
 idx = 0
 
-for group in draw:
-    new_points = converter.convert(group.T)
+for edge in edges:
+    new_points = converter.convert(edge.T)
 
-    percentage = idx / len(draw)
+    percentage = idx / len(edges)
     print(int(percentage * 100))
 
     x = new_points[0, 0]

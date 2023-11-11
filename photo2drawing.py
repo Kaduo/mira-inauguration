@@ -7,9 +7,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from skimage.morphology import skeletonize
 from edge_walker import group_edges
+import matplotlib.colors as mcolors
+from itertools import cycle
 
 
-def rgb2edges(image, plot=False):
+def rgb2edge_image(image, plot=False):
     """
     Convert the RGB image into a binary image with only edges.
     """
@@ -30,24 +32,44 @@ def rgb2edges(image, plot=False):
         ax4.set_title("4. Canny filter.")
         ax5.imshow(skeletonized_image)
         ax5.set_title("5. Skeletonize filter.")
-        plt.show()
 
     return skeletonized_image
 
 
-def rgb2grouped_edges(
+def rgb2edges(
     image,
-    nb_groups=1000,
+    nb_edges=1000,
     min_edge_length=10,
     step=5,
     plot_preprocessing=False,
     plot_result=False,
 ):
-    edge_image = rgb2edges(image, plot_preprocessing)
+    edge_image = rgb2edge_image(image, plot_preprocessing)
+    edges = group_edges(edge_image, min_edge_length=min_edge_length, step=step)
+
+    # Sort edges by length
+    sorted_edges = sorted(edges, key=len, ascending=False)
+
+    # Select the nb_edges longest edges
+    res = sorted_edges[:nb_edges]
+
+    smallest_length = len(res[-1])
+
+    # Also select every edge that's the same length as the shortest edge already selected
+    for g in sorted_edges[nb_edges:]:
+        if len(g) > smallest_length:
+            break
+        else:
+            res.append(g)
+
+    if plot_result:
+        plot_edges(res)
+
+    return res
 
 
 def grouping_edges(image, maximum_groups, rescale=True, min_edge_length=10, step=5):
-    edge_image = rgb2edges(image)
+    edge_image = rgb2edge_image(image)
 
     max_length = max(edge_image.shape[0], edge_image.shape[1])
     edge_groups = group_edges(edge_image)
@@ -69,7 +91,6 @@ def grouping_edges(image, maximum_groups, rescale=True, min_edge_length=10, step
     maximum = np.max(edge_group_lens)
     filtered_indexes = []
 
-    print(maximum)
     for i in range(maximum, 0, -1):
         if len(filtered_indexes) > maximum_groups:
             break
@@ -77,7 +98,6 @@ def grouping_edges(image, maximum_groups, rescale=True, min_edge_length=10, step
             if len(filtered_edge_groups[id_point_group]) == i:
                 filtered_indexes.append(id_point_group)
     size_groups = len(filtered_indexes)
-    print(size_groups)
 
     copy_filtered_edge = []
     for idx in range(len(filtered_edge_groups)):
@@ -88,16 +108,23 @@ def grouping_edges(image, maximum_groups, rescale=True, min_edge_length=10, step
     return edge_image, filtered_edge_groups
 
 
-def plotting_contours(filtered_edge_groups):
-    step = 2
+def plot_edges(edges, use_different_colors=True):
+    if use_different_colors:
+        colors = mcolors.XKCD_COLORS.values()
+    else:
+        colors = ["black"]
+
+    plt.figure()
+    plt.title("Edges")
+
     plt.gca().invert_yaxis()
-    for point_group in filtered_edge_groups:
-        preceding_point = point_group[0]
-        for p in point_group[1::step]:
+    for edge, color in zip(edges, cycle(colors)):
+        preceding_point = edge[0]
+        for p in edge[1:]:
             plt.plot(
                 (preceding_point[0], p[0]),
                 (preceding_point[1], p[1]),
-                c="black",
+                c=color,
                 linewidth=0.2,
             )
             preceding_point = p.copy()

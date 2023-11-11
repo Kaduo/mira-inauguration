@@ -3,6 +3,13 @@
 import numpy as np
 
 
+def find_short_and_long_side(shape):
+    long_idx = np.argmax(shape)
+    short_idx = np.argmin(shape)
+
+    return short_idx, long_idx
+
+
 class CoordinatesConverter:
     """
     Arguments:
@@ -11,33 +18,38 @@ class CoordinatesConverter:
     """
 
     def __init__(self, image_shape, origin, point1, point2):
-        image_length = max(image_shape)
-        image_length_idx = np.argmax(image_shape)
-        image_width = min(image_shape)
-        image_width_idx = np.argmin(image_shape)
+        image_short_idx, image_long_idx = find_short_and_long_side(image_shape)
+
+        image_long_length = max(image_shape)
+        image_short_length = min(image_shape)
+
         e1 = point1 - origin
         e2 = point2 - origin
         l1 = np.linalg.norm(e1)
         l2 = np.linalg.norm(e2)
 
-        plane_length = max(l1, l2)
-        plane_length_idx = np.argmax([l1, l2])
-        plane_length_vec = [e1, e2][plane_length_idx]
-        plane_width = min(l1, l2)
-        plane_width_idx = np.argmin([l1, l2])
-        plane_width_vec = [e1, e2][plane_width_idx]
+        plane_short_idx, plane_long_idx = find_short_and_long_side([l1, l2])
+        plane_long_length = max(l1, l2)
+        plane_long_vec = [e1, e2][plane_long_idx]
 
-        image_ratio = image_length / image_width
-        plane_ratio = plane_length / plane_width
+        plane_short_length = min(l1, l2)
+        plane_short_vec = [e1, e2][plane_short_idx]
+
+        image_ratio = image_long_length / image_short_length
+        plane_ratio = plane_long_length / plane_short_length
 
         mat = np.zeros((2, 3))
 
         if image_ratio > plane_ratio:
-            mat[image_length_idx] = plane_length_vec / image_length
-            mat[image_width_idx] = (plane_width_vec * plane_length) / (plane_width * image_length)
+            mat[image_long_idx] = plane_long_vec / image_long_length
+            mat[image_short_idx] = (plane_short_vec * plane_long_length) / (
+                plane_short_length * image_long_length
+            )
         else:
-            mat[image_width_idx] = plane_width_vec / image_width
-            mat[image_length_idx] = (plane_length_vec * plane_width) / (plane_length * image_width)
+            mat[image_short_idx] = plane_short_vec / image_short_length
+            mat[image_long_idx] = (plane_long_vec * plane_short_length) / (
+                plane_long_length * image_short_length
+            )
 
         self.mat = mat.T
         self.origin = origin.T
@@ -46,5 +58,7 @@ class CoordinatesConverter:
         """
         Arguments:
         points -- numpy array of shape (2, number_of_points)
+
+        Returns a numpy array of shape (3, number_of_points)
         """
         return np.dot(self.mat, points) + self.origin

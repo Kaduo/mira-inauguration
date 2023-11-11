@@ -169,32 +169,32 @@ def optimize_path(input_data, threshold):
     return new_data, compression
 
 
-def sort_point_groups(point_groups):
-    """Sort point groups so as to minimize useless movements."""
-    point_groups = point_groups.copy()
-    new_groups = [point_groups.pop(0)]
-    for _ in range(len(point_groups) - 1):
+def sort_edges(edges):
+    """Sort edges so as to minimize useless movements."""
+    edges = edges.copy()
+    sorted_edges = [edges.pop(0)]
+    for _ in range(len(edges) - 1):
 
-        def dist_to_last_group(other_group):
+        def dist_to_last_edge(other_edge):
             return min(
-                LA.norm(new_groups[-1][-1] - other_group[0]),
-                LA.norm(new_groups[-1][-1] - other_group[-1]),
+                LA.norm(sorted_edges[-1][-1] - other_edge[0]),
+                LA.norm(sorted_edges[-1][-1] - other_edge[-1]),
             )
 
-        def better_flipped(other_group):
-            return LA.norm(new_groups[-1][-1] - other_group[-1]) < LA.norm(
-                new_groups[-1][-1] - other_group[0]
+        def better_flipped(other_edge):
+            return LA.norm(sorted_edges[-1][-1] - other_edge[-1]) < LA.norm(
+                sorted_edges[-1][-1] - other_edge[0]
             )
 
-        point_groups = sorted(point_groups, key=dist_to_last_group)
+        edges = sorted(edges, key=dist_to_last_edge)
 
-        group_to_add = point_groups.pop(0)
-        if better_flipped(group_to_add):
-            group_to_add = group_to_add[::-1]
+        edge_to_add = edges.pop(0)
+        if better_flipped(edge_to_add):
+            edge_to_add = edge_to_add[::-1]
 
-        new_groups.append(group_to_add)
+        sorted_edges.append(edge_to_add)
 
-    return new_groups
+    return sorted_edges
 
 
 def image_thresholding(image):

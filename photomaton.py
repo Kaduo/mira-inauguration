@@ -24,7 +24,7 @@ import pickle
 from xarm.wrapper import XArmAPI
 from utils import find_surface, absolute_coords, optimize_path, image_thresholding
 from numpy import linalg as LA
-from photo2drawing import grouping_edges, plotting_contours
+from photo2drawing import grouping_edges, plot_edges
 
 import skimage as ski
 
@@ -52,12 +52,12 @@ else:
             sys.exit(1)
 
 
-selected = 0
+selected = False
 cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
 while True:
-    while selected == 0:
+    while not selected:
         ret, frame = cap.read()
         frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
         frame = frame[frame.shape[0] // 2 :, :].copy()
@@ -95,7 +95,7 @@ while True:
             cv2.imshow("MIRA", frame)
             key = cv2.waitKey(1) & 0xFF
             cv2.imwrite("image.jpg", frame)
-            selected = 1
+            selected = True
         if key == ord("e"):
             cv2.destroyWindow("MIRA")
             break
@@ -297,6 +297,6 @@ while True:
         relative=False,
     )
 
-    selected = 0
+    selected = False
 # R_mira = np.array([x_new,y_new])
 # new_points = abs_coords.convert(R_mira)

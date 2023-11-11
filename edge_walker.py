@@ -103,7 +103,7 @@ def whole_edge(x, y, is_edge):
     return res
 
 
-def group_edges(edge_image, min_edge_length=10, step=5):
+def group_edges(edge_image, min_edge_length=2, step=1):
     edges = []
     width = edge_image.shape[1]
     height = edge_image.shape[0]

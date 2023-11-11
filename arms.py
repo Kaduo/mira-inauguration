@@ -50,23 +50,23 @@ def calibrate_from_dimensions(arm, origin, dx, dy):
     return calibrate(arm, origin, p1, p2)
 
 
-def draw_point_group(arm, point_group, dz=2, speed=100):
+def draw_edge(arm, edge, dz=2, speed=100):
     """
-    1. Go above the first point in the group.
+    1. Go above the first point in the edge.
     2. Lower the pen.
-    3. Go through all of the points in the group.
+    3. Go through all of the points in the edge.
     4. Raise the pen above the last point.
 
     Arguments:
-    point_group -- an array of shape (3, number_of_points)
+    edge -- an array of shape (3, number_of_points)
     dz -- the distance from the plane when the pen is lifted, in mm
 
     Returns the number of points drawn.
     """
 
-    x = point_group[0, 0]
-    y = point_group[1, 0]
-    z = point_group[2, 0]
+    x = edge[0, 0]
+    y = edge[1, 0]
+    z = edge[2, 0]
 
     # Put pen in position, above the start point
     arm.set_position(
@@ -84,10 +84,10 @@ def draw_point_group(arm, point_group, dz=2, speed=100):
     )
 
     # Draw
-    for i in range(0, point_group.shape[1]):
-        x = point_group[0, i]
-        y = point_group[1, i]
-        z = point_group[2, i]
+    for i in range(0, edge.shape[1]):
+        x = edge[0, i]
+        y = edge[1, i]
+        z = edge[2, i]
 
         arm.set_position_aa(
             [x, y, z, 180, 0, 0],
@@ -114,24 +114,24 @@ def draw_point_group(arm, point_group, dz=2, speed=100):
         relative=True,
     )
 
-    return len(point_group)
+    return len(edge)
 
 
-def draw_point_groups(arm, point_groups, dz=2, verbose=True, speed=100):
+def draw_edges(arm, edges, dz=2, verbose=True, speed=100):
     """
-    Draw the point groups in order.
+    Draw the edges in order.
 
     Arguments:
-    point_groups -- a list of point groups, each point group being of shape (3, number_of_points)
+    edges -- a list of point groups, each edge being of shape (3, number_of_points)
     dz -- the distance from the plane when the pen is lifted, in mm (default 2.0)
     verbose -- if True, print the progress as a percentage
     """
 
     nb_points_drawn = 0
-    nb_points = sum([len(group) for group in point_groups])
+    nb_points = sum([len(edge) for edge in edges])
 
-    for group in point_groups:
-        nb_points_drawn += draw_point_group(arm, group, dz, speed)
+    for edge in edges:
+        nb_points_drawn += draw_edge(arm, edge, dz, speed)
 
         if verbose:
             print(f"{nb_points_drawn*100/nb_points}% complete...")
