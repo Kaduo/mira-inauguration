@@ -13,7 +13,7 @@ from itertools import cycle
 
 def rgb2edge_image(image, plot=False):
     """
-    Convert the RGB image into a binary image with only edges.
+    Convert an RGB image into a binary image of its edges.
     """
     gray_image = ski.color.rgb2gray(image)
     blurred_image = ski.restoration.denoise_bilateral(gray_image, sigma_color=0.05, sigma_spatial=2)
@@ -55,12 +55,12 @@ def rgb2edges(
 
     smallest_length = len(res[-1])
 
-    # Also select every edge that's the same length as the shortest edge already selected
-    for g in sorted_edges[nb_edges:]:
-        if len(g) > smallest_length:
+    # Also select every edge with the same length as the shortest edge already selected
+    for edge in sorted_edges[nb_edges:]:
+        if len(edge) > smallest_length:
             break
         else:
-            res.append(g)
+            res.append(edge)
 
     if plot_result:
         plot_edges(res)

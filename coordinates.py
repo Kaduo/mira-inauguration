@@ -62,3 +62,11 @@ class CoordinatesConverter:
         Returns a numpy array of shape (3, number_of_points)
         """
         return np.dot(self.mat, points) + self.origin
+
+    def convert_list_of_points(self, list_of_points):
+        res = []
+
+        for points in list_of_points:
+            res.append(self.convert(points))
+
+        return res

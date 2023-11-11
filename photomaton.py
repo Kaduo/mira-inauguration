@@ -10,13 +10,9 @@ import pandas as pd
 import cv2
 
 import numpy as np
-import pandas as pd
 
 import matplotlib.pyplot as plt
 
-
-import os
-import sys
 import time
 import pickle
 
@@ -25,37 +21,71 @@ from xarm.wrapper import XArmAPI
 from utils import find_surface, absolute_coords, optimize_path, image_thresholding
 from numpy import linalg as LA
 from photo2drawing import grouping_edges, plot_edges
+from arms import get_photomaton_arm
+
 
 import skimage as ski
 
 
 number_of_lines = 700
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 file = open("mira_coords.pkl", "rb")
 mira_data = pickle.load(file)
 
-if len(sys.argv) >= 2:
-    ip = sys.argv[1]
-else:
-    try:
-        from configparser import ConfigParser
-
-        parser = ConfigParser()
-        parser.read("../robot.conf")
-        ip = parser.get("xArm", "ip")
-    except:
-        ip = "192.168.1.207"
-        if not ip:
-            print("input error, exit")
-            sys.exit(1)
+arm = get_photomaton_arm()
 
 
-selected = False
+def photomaton_loop(cap, waiting_time=100):
+    selected = False
+    while not selected:
+        _, frame = cap.read()
+        frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        frame = frame[frame.shape[0] // 2 :, :].copy()
+        im = cv2.putText(
+            frame,
+            "Portrait robot !",
+            (300, 100),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            2,
+            (0, 0, 0),
+            2,
+            cv2.LINE_AA,
+        )
+        cv2.imshow("MIRA", im)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("c"):
+            for i in range(waiting_time, 0, -1):
+                im = cv2.putText(
+                    frame,
+                    f"{round(i/30)}",
+                    (int(frame.shape[1] / 2), int(frame.shape[0] / 2)),
+                    cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+                    5,
+                    (0, 0, 0),
+                    2,
+                    cv2.LINE_AA,
+                )
+                cv2.imshow("MIRA", im)
+                key = cv2.waitKey(1) & 0xFF
+                time.sleep(0.01)
+                _, frame = cap.read()
+                frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                frame = frame[frame.shape[0] // 2 :, :].copy()
+
+            cv2.imshow("MIRA", frame)
+            key = cv2.waitKey(1) & 0xFF
+            cv2.imwrite("image.jpg", frame)
+            return frame
+        if key == ord("e"):
+            cv2.destroyWindow("MIRA")
+            return
+
+
 cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
+
 while True:
     while not selected:
         ret, frame = cap.read()
