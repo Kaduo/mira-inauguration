@@ -2,6 +2,6 @@
 *.jpg
 *.png
 *.pkl
--points_mira.pkl
+-mira_coords.pkl
 *.JPG
 .venv/
