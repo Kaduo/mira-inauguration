@@ -34,9 +34,9 @@ arm.set_state(state=0)
 
 # Origin
 
-x0 = 177
-y0 = -118
-z0 = 134
+x0 = 200
+y0 = -120
+z0 = 140
 Rx0 = 180
 Ry0 = 0
 Rz0 = 0
@@ -45,18 +45,18 @@ point2,torques2 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
 plt.figure(2)
 plt.plot(torques2)
 
-x0 = 550
-y0 = -118
-z0 = 137
+x0 = 560
+y0 = -120
+z0 = 140
 
 point3,torques3 = findWall(arm,x0,y0,z0,Rx0,Ry0,Rz0)
 plt.figure(1)
 plt.plot(torques3)
 
 
-x0 = 177
-y0 = 130
-z0 = 137
+x0 = 200
+y0 = 148
+z0 = 140
 
 torques = []
 
