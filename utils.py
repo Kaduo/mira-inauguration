@@ -14,7 +14,7 @@ import time
 import skimage as ski
 
 
-def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, epsilon=1):
+def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, epsilon=1, verbose=True):
     torques = []
     arm.set_position(
         x=x,
@@ -82,7 +82,7 @@ def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, epsilon=1):
     arm.set_position(
         x=x,
         y=y,
-        z=z - 5,
+        z=z - 10,
         roll=Rx,
         pitch=Ry,
         yaw=Rz,
@@ -96,8 +96,10 @@ def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, epsilon=1):
         actual_torques = np.array(arm.joints_torque[0:6])
         pos = arm.position_aa
         torques.append(actual_torques)
-        print("i'm waiting for collision")
-    print("I collided")
+        if verbose:
+            print("i'm waiting for collision")
+    if verbose:
+        print("I collided")
     arm.set_state(4)
     time.sleep(1)
     arm.set_state(0)
@@ -115,6 +117,7 @@ def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, epsilon=1):
         relative=False,
     )
     return pos, torques
+
 
 
 class absolute_coords:

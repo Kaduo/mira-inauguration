@@ -32,17 +32,18 @@ def get_big_drawing_arm():
     return get_arm(get_ip("big_drawing"))
 
 
-def calibrate(arm, origin, p1, p2, Rx=180, Ry=0, Rz=0):
-    x0, y0, z0 = origin
-    x1, y1, z1 = p1
-    x2, y2, z2 = p2
+def calibrate(arm, origin, p1, p2, Rx=180, Ry=0, Rz=0, epsilon=1):
+    """
+    Return a list of the calibrated coordinates, with the origin in first.
+    """
+    res = []
 
-    calibrated_origin = np.array(find_surface(arm, x0, y0, z0, Rx, Ry, Rz)[0][:3]).reshape((1, -1))
-    calibrated_p1 = np.array(find_surface(arm, x1, y1, z1, Rx, Ry, Rz)[0][:3]).reshape((1, -1))
-    calibrated_p2 = np.array(find_surface(arm, x2, y2, z2, Rx, Ry, Rz)[0][:3]).reshape((1, -1))
+    for p in [origin, p1, p2]:
 
-    return calibrated_origin, calibrated_p1, calibrated_p2
+        x, y, z = p
+        res.append(np.array(find_surface(arm, x, y, z, Rx, Ry, Rz, epsilon=epsilon)[0][:3]).reshape((1, -1)))
 
+    return res
 
 def calibrate_from_dimensions(arm, origin, dx, dy):
     p1 = origin + np.array([dx, 0, 0])

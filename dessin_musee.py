@@ -9,13 +9,13 @@ from photo2drawing import rgb2edges
 
 arm = get_big_drawing_arm()
 
-above_origin = np.array([200, -120, 138])
-above_p1 = np.array([560, -120, 140])
-above_p2 = np.array([200, 138, 139])
+above_origin = np.array([200, -100, 147])
+above_p1 = np.array([560, -100, 148])
+above_p2 = np.array([200, 135, 147])
 
 @concurrent.process
 def make_converter(image):
-    origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2)
+    origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=1)
     converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
     return converter
 
