@@ -5,4 +5,5 @@
 !mira_coords.pkl
 *.JPG
 .venv/
-__pycache__/
+!data/
+**/__pycache__/
