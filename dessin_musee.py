@@ -23,9 +23,6 @@ def make_converter(image):
 @concurrent.process
 def process_image(image, nb_edges=1000):
 
-    print("I'm processing the IMAGE ")
-
-    image = ski.io.imread("data/st jerome.jpg")
     edges = rgb2edges(image, nb_edges=nb_edges)
     edges = sort_edges(edges)
     return edges
