@@ -8,13 +8,13 @@ from photo2drawing import rgb2edges
 
 arm = get_big_drawing_arm()
 
-above_origin = np.array([177, -118, 134])
-above_p1 = np.array([550, -118, 137])
-above_p2 = np.array([177, 130, 137])
+above_origin = np.array([200, -120, 138])
+above_p1 = np.array([560, -120, 140])
+above_p2 = np.array([200, 138, 138])
 
 origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2)
 
-image = ski.io.imread("st jerome.jpg")
+image = ski.io.imread("data/st jerome.jpg")
 converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
 
 edges = rgb2edges(image, nb_edges=1000)

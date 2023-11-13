@@ -37,9 +37,9 @@ def calibrate(arm, origin, p1, p2, Rx=180, Ry=0, Rz=0):
     x1, y1, z1 = p1
     x2, y2, z2 = p2
 
-    calibrated_origin, _ = find_surface(arm, x0, y0, z0, Rx, Ry, Rz)[:3].reshape((1, -1))
-    calibrated_p1, _ = find_surface(arm, x1, y1, z1, Rx, Ry, Rz)[:3].reshape((1, -1))
-    calibrated_p2, _ = find_surface(arm, x2, y2, z2, Rx, Ry, Rz)[:3].reshape((1, -1))
+    calibrated_origin = np.array(find_surface(arm, x0, y0, z0, Rx, Ry, Rz)[0][:3]).reshape((1, -1))
+    calibrated_p1 = np.array(find_surface(arm, x1, y1, z1, Rx, Ry, Rz)[0][:3]).reshape((1, -1))
+    calibrated_p2 = np.array(find_surface(arm, x2, y2, z2, Rx, Ry, Rz)[0][:3]).reshape((1, -1))
 
     return calibrated_origin, calibrated_p1, calibrated_p2
 

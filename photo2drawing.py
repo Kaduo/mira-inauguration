@@ -48,7 +48,7 @@ def rgb2edges(
     edges = group_edges(edge_image, min_edge_length=min_edge_length, step=step)
 
     # Sort edges by length
-    sorted_edges = sorted(edges, key=len, ascending=False)
+    sorted_edges = sorted(edges, key=len, reverse=True)
 
     # Select the nb_edges longest edges
     res = sorted_edges[:nb_edges]

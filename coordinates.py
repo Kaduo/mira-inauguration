@@ -64,9 +64,13 @@ class CoordinatesConverter:
         return np.dot(self.mat, points) + self.origin
 
     def convert_list_of_points(self, list_of_points):
+        """
+        Argument:
+        list_of_points -- list of numpy arrays of shape (number_of_points, 2)
+        """
         res = []
 
         for points in list_of_points:
-            res.append(self.convert(points))
+            res.append(self.convert(points.T))
 
         return res
