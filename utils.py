@@ -76,7 +76,7 @@ def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, epsilon=1, verbose=True):
     maxs = np.max([test1_torques, test2_torques, test3_torques, initial_torques], axis=0)
     d = np.abs(maxs - mins)
     print(d)
-    boundaries = [mins - epsilon, maxs + epsilon]
+    boundaries = [mins - epsilon*d, maxs + epsilon*d]
     print(boundaries)
     actual_torques = np.array(arm.joints_torque[0:6])
     arm.set_position(
