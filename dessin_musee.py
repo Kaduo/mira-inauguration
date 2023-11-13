@@ -10,7 +10,7 @@ arm = get_big_drawing_arm()
 
 above_origin = np.array([200, -120, 138])
 above_p1 = np.array([560, -120, 140])
-above_p2 = np.array([200, 138, 138])
+above_p2 = np.array([200, 138, 139])
 
 origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2)
 
