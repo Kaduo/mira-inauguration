@@ -87,7 +87,7 @@ point3 = np.array(point3[:3]).reshape((1,-1))
 #     arm.set_position_aa([p2[0], p2[1], p2[2], 180, 0, 0], speed=100, is_radian=0, wait=True, radius = None, relative = False)
 #     arm.set_position_aa([p2[0], p2[1], 140, 180, 0, 0], speed=100, is_radian=0, wait=True, radius = None, relative = False)
 
-image = ski.io.imread("st jerome.jpg")
+image = ski.io.imread("data/st jerome.jpg")
 converter = coords_converter(list(reversed(image.shape[:2])), point2, point1, point3)
 
 print(image.shape)
