@@ -36,7 +36,7 @@ arm.set_state(state=0)
 
 x0 = 200
 y0 = -120
-z0 = 140
+z0 = 138
 Rx0 = 180
 Ry0 = 0
 Rz0 = 0
@@ -56,7 +56,7 @@ plt.plot(torques3)
 
 x0 = 200
 y0 = 148
-z0 = 140
+z0 = 138
 
 torques = []
 

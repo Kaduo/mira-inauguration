@@ -5,3 +5,5 @@
 -points_mira.pkl
 *.JPG
 .venv/
+!data/
+__pycache__/
