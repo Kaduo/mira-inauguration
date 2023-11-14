@@ -86,6 +86,8 @@ cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
 
+selected = False
+
 while True:
     while not selected:
         ret, frame = cap.read()
@@ -154,8 +156,8 @@ while True:
     arm.set_mode(0)
     arm.set_state(state=0)
 
-    x0 = 420
-    y0 = 60
+    x0 = 260
+    y0 = -63
     z0 = 193
     Rx0 = 180
     Ry0 = 0
@@ -165,15 +167,15 @@ while True:
     plt.figure(2)
     plt.plot(torques2)
 
-    x0 = 420
-    y0 = -60
+    x0 = 260
+    y0 = 63
 
     point3, torques3 = find_surface(arm, x0, y0, z0, Rx0, Ry0, Rz0)
     plt.figure(1)
     plt.plot(torques3)
 
-    x0 = 300
-    y0 = 60
+    x0 = 415
+    y0 = -63
 
     torques = []
 
