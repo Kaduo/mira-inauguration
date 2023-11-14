@@ -41,6 +41,7 @@ class CoordinatesConverter:
         plane_ratio = plane_long_length / plane_short_length
 
         shift = np.zeros((3,1))
+        print("HERE (:", shift)
 
         mat = np.zeros((2, 3))
 
@@ -49,7 +50,7 @@ class CoordinatesConverter:
             mat[image_short_idx] = (plane_short_vec * plane_long_length) / (
                 plane_short_length * image_long_length
             )
-            shift[plane_short_idx][0] = (plane_short_length - plane_long_length/image_ratio)*1/2
+            shift[plane_short_idx,0] = (plane_short_length - plane_long_length/image_ratio)*1/2
 
 
         else:
@@ -57,26 +58,28 @@ class CoordinatesConverter:
             mat[image_long_idx] = (plane_long_vec * plane_short_length) / (
                 plane_long_length * image_short_length
             )
-            shift[plane_long_idx][0] = (plane_long_length - plane_short_length*image_ratio)*1/2
+            shift[plane_long_idx, 0] = (plane_long_length - plane_short_length*image_ratio)*1/2
 
 
         self.mat = mat.T
         self.origin = origin.T
         self.shift = shift
-        print("ICICIIIIII", self.shift)
+        print("OY", self.shift)
 
     def convert(self, points):
         """
         Arguments:
+        
         points -- numpy array of shape (2, number_of_points)
 
         Returns a numpy array of shape (3, number_of_points)
         """
-        return np.dot(self.mat, points) + self.origin + self.shift
+        return np.dot(self.mat, points) + self.origin
 
     def convert_list_of_points(self, list_of_points):
         """
         Argument:
+
         list_of_points -- list of numpy arrays of shape (number_of_points, 2)
         """
         res = []
