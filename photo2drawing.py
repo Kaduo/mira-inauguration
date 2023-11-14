@@ -67,7 +67,7 @@ def edge_image2edges(edge_image, min_edge_length=10, step=5, nb_edges=1000, plot
 
     # Also select every edge with the same length as the shortest edge already selected
     for edge in sorted_edges[nb_edges:]:
-        if len(edge) > smallest_length:
+        if len(edge) < smallest_length:
             break
         else:
             res.append(edge)

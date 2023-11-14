@@ -120,7 +120,9 @@ while True:
 
     edge_image[15*edge_image.shape[0]//16:, 3*edge_image.shape[1]//4:] = True
 
-    edges = edge_image2edges(edge_image, nb_edges = 700)
+    edges = edge_image2edges(edge_image, nb_edges = 30)
+
+    print(len(edges))
 
     drawing_in_progress(edge_image)
 
@@ -154,6 +156,10 @@ while True:
                 mi = maybe_mi
         data = (data - mi) / (ma - mi)
         print(data)
+        with open("mira_normalized.pkl", "wb") as f:
+            pickle.dump(data, f)
+            f.close()
+            print("SToP ME NOW")
         data /= 4
         data[1] += frame.shape[0] / max(frame.shape[0], frame.shape[1]) + 0.04
         # data[1] -= 0.3
