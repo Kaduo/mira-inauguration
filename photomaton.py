@@ -20,8 +20,9 @@ import pickle
 from xarm.wrapper import XArmAPI
 from utils import find_surface, absolute_coords, optimize_path, image_thresholding
 from numpy import linalg as LA
-from photo2drawing import grouping_edges, plot_edges
-from arms import get_photomaton_arm
+from photo2drawing import grouping_edges, plot_edges, rgb2edges
+from arms import get_photomaton_arm, calibrate
+from coordinates import CoordinatesConverter
 
 
 import skimage as ski
@@ -85,18 +86,23 @@ if not cap.isOpened():
     raise IOError("Cannot open webcam")
 
 
-number_of_lines = 700
+number_of_lines = 300
 
 file = open("mira_coords.pkl", "rb")
 mira_data = pickle.load(file)
 
 arm = get_photomaton_arm()
 
+above_origin = np.array([260, -63, 193])
+above_p1 = np.array([260, 63, 193])
+above_p2 = np.array([415, -63, 193])
+
 while True:
-    frame = photomaton_loop(cap)
+    frame = photomaton_loop(cap, 0)
     image = ski.io.imread("image.jpg")
 
     edge, draw = grouping_edges(image, number_of_lines)
+    edges = rgb2edges(image)
     edge = np.array(edge, dtype=np.uint8) * 255
     image_edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)
     superimposed = cv2.addWeighted(image_edge, 0.5, image, 0.5, 0)
@@ -119,48 +125,13 @@ while True:
     arm.set_mode(0)
     arm.set_state(state=0)
 
-    x0 = 260
-    y0 = -63
-    z0 = 193
-    Rx0 = 180
-    Ry0 = 0
-    Rz0 = 0
+    origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=1)
 
-    point2, torques2 = find_surface(arm, x0, y0, z0, Rx0, Ry0, Rz0)
-    plt.figure(2)
-    plt.plot(torques2)
-
-    x0 = 260
-    y0 = 63
-
-    point3, torques3 = find_surface(arm, x0, y0, z0, Rx0, Ry0, Rz0)
-    plt.figure(1)
-    plt.plot(torques3)
-
-    x0 = 415
-    y0 = -63
-
-    torques = []
-
-    point1, torques1 = find_surface(arm, x0, y0, z0, Rx0, Ry0, Rz0)
-    plt.figure(3)
-    plt.plot(torques1)
-
-    x0, y0, z0 = point2[0], point2[1], point2[2]
-    x1, y1, z1 = point3[0], point3[1], point3[2]
-    x2, y2, z2 = point1[0], point1[1], point1[2]
-
-    print(point1)
-    print(point2)
-    print(point3)
-
-    abs_coords = absolute_coords(x0, y0, z0, x1, y1, z1, x2, y2, z2)
-
+    converter = CoordinatesConverter(image.shape[:2], origin, p1, p2)
     idx = 0
 
-    for group in draw:
-        new_points = abs_coords.convert(group.T)
-
+    for group in edges:
+        new_points = converter.convert(group.T)
         percentage = idx / len(draw)
         print(int(percentage * 100))
 
@@ -171,7 +142,7 @@ while True:
         arm.set_position(
             x=x,
             y=y,
-            z=z + 2,
+            z=z + 5,
             roll=180,
             pitch=0,
             yaw=0,
@@ -200,7 +171,7 @@ while True:
         arm.set_position(
             x=0,
             y=0,
-            z=2,
+            z=5,
             roll=0,
             pitch=0,
             yaw=0,
@@ -230,7 +201,7 @@ while True:
         data[1] += image.shape[0] / max(image.shape[0], image.shape[1]) + 0.04
         # data[1] -= 0.3
         data[0] += 1 - 1 / 4
-        new_points = abs_coords.convert(data)
+        new_points = converter.convert(data)
         x = new_points[0, 0]
         y = new_points[1, 0]
         z = new_points[2, 0]

@@ -13,7 +13,9 @@ def find_short_and_long_side(shape):
 class CoordinatesConverter:
     """
     Arguments:
+    
     image_shape -- the dimensions of the original image: (height, width)
+
     origin, point1, point2 -- numpy arrays of shape (3, 1)
     """
 
