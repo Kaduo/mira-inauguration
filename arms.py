@@ -25,11 +25,20 @@ def get_arm(ip):
 
 
 def get_photomaton_arm():
-    return get_arm(get_ip("photomaton"))
+    arm = get_arm(get_ip("photomaton"))
+    enable_arm(arm)
+    return arm
 
 
 def get_big_drawing_arm():
-    return get_arm(get_ip("big_drawing"))
+    arm = get_arm(get_ip("big_drawing"))
+    enable_arm(arm)
+    return arm
+
+def enable_arm(arm):
+    arm.motion_enable(enable=True)
+    arm.set_mode(0)
+    arm.set_state(state=0)
 
 
 def calibrate(arm, origin, p1, p2, Rx=180, Ry=0, Rz=0, epsilon=1):
