@@ -89,48 +89,7 @@ if not cap.isOpened():
 selected = False
 
 while True:
-    while not selected:
-        ret, frame = cap.read()
-        frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-        frame = frame[frame.shape[0] // 2 :, :].copy()
-        im = cv2.putText(
-            frame,
-            "Portrait robot !",
-            (300, 100),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            2,
-            (0, 0, 0),
-            2,
-            cv2.LINE_AA,
-        )
-        cv2.imshow("MIRA", im)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("c"):
-            for i in range(100, 0, -1):
-                im = cv2.putText(
-                    frame,
-                    f"{round(i/30)}",
-                    (int(frame.shape[1] / 2), int(frame.shape[0] / 2)),
-                    cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
-                    5,
-                    (0, 0, 0),
-                    2,
-                    cv2.LINE_AA,
-                )
-                cv2.imshow("MIRA", im)
-                key = cv2.waitKey(1) & 0xFF
-                time.sleep(0.01)
-                ret, frame = cap.read()
-                frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                frame = frame[frame.shape[0] // 2 :, :].copy()
-
-            cv2.imshow("MIRA", frame)
-            key = cv2.waitKey(1) & 0xFF
-            cv2.imwrite("image.jpg", frame)
-            selected = True
-        if key == ord("e"):
-            cv2.destroyWindow("MIRA")
-            break
+    frame = photomaton_loop(cap)
     image = ski.io.imread("image.jpg")
 
     edge, draw = grouping_edges(image, number_of_lines)
