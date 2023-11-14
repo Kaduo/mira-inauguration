@@ -41,7 +41,6 @@ class CoordinatesConverter:
         plane_ratio = plane_long_length / plane_short_length
 
         shift = np.zeros((3,1))
-        print("HERE (:", shift)
 
         mat = np.zeros((2, 3))
 
@@ -64,12 +63,11 @@ class CoordinatesConverter:
         self.mat = mat.T
         self.origin = origin.T
         self.shift = shift
-        print("OY", self.shift)
 
     def convert(self, points):
         """
         Arguments:
-        
+
         points -- numpy array of shape (2, number_of_points)
 
         Returns a numpy array of shape (3, number_of_points)
