@@ -28,19 +28,10 @@ def process_image(image, nb_edges=1000):
     return edges
 
 
-@concurrent.process
-def process_edge_image(edge_image, nb_edges=700):
-    """
-    Delete me
-    """
-    return sort_edges(edge_image2edges(edge_image))
-
-
 if __name__=="__main__":
 
-    image = ski.io.imread("data/cheat-thin.png")
-    image = image > ski.filters.threshold_otsu(image)
-    future_edges = process_edge_image(image)
+    image = ski.io.imread("data/st jerome.png")
+    future_edges = process_image(image)
     future_converter = make_converter(image)
 
     converter = future_converter.result()
