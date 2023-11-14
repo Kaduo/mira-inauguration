@@ -38,6 +38,26 @@ def get_frame(cap):
     ret, frame = cap.read()
     return process_frame(frame)
 
+def drawing_in_progress(edge_image):
+    edge_image = np.array(edge_image, dtype=np.uint8) * 255
+    edge_image = cv2.cvtColor(edge_image, cv2.COLOR_GRAY2BGR)
+    superimposed = cv2.addWeighted(edge_image, 0.5, frame, 0.5, 0)
+
+    im = cv2.putText(
+        superimposed,
+        "dessin en cours...",
+        (int(frame.shape[1] / 2) - 300, int(frame.shape[0]) - 100),
+        cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+        3,
+        (0, 0, 0),
+        2,
+        cv2.LINE_AA,
+    )
+
+    cv2.imshow("MIRA", im)
+
+
+
 def photomaton_loop(cap, waiting_time=100):
     selected = False
     while not selected:
@@ -102,26 +122,8 @@ while True:
     frame = photomaton_loop(cap, 0)
 
     edges, edge_image = rgb2edges(frame, return_edge_image=True)
-    edge_image = np.array(edge_image, dtype=np.uint8) * 255
-    edge_image = cv2.cvtColor(edge_image, cv2.COLOR_GRAY2BGR)
-    superimposed = cv2.addWeighted(edge_image, 0.5, frame, 0.5, 0)
-    im = cv2.putText(
-        superimposed,
-        "dessin en cours...",
-        (int(frame.shape[1] / 2) - 300, int(frame.shape[0]) - 100),
-        cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
-        3,
-        (0, 0, 0),
-        2,
-        cv2.LINE_AA,
-    )
 
-
-    print(edges[0].shape)
-    print(frame.shape)
-
-    cv2.imshow("MIRA", im)
-    key = cv2.waitKey(1) & 0xFF
+    drawing_in_progress(edge_image)
 
     arm.motion_enable(enable=True)
     arm.set_mode(0)
@@ -130,12 +132,13 @@ while True:
     origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=1)
 
     converter = CoordinatesConverter(frame.shape[:2], origin, p1, p2)
+    sorted_edges = sort_edges(edges)
     converted_edges = converter.convert_list_of_points(edges)
-    sorted_edges = sort_edges(converted_edges)
+    
     idx = 0
 
 
-    draw_edges(arm, sorted_edges)
+    draw_edges(arm, converted_edges)
 
     for letter in mira_data:
         data = np.array(mira_data[letter])
@@ -216,7 +219,3 @@ while True:
         radius=None,
         relative=False,
     )
-
-    selected = False
-# R_mira = np.array([x_new,y_new])
-# new_points = abs_coords.convert(R_mira)

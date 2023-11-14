@@ -177,7 +177,7 @@ def sort_edges(edges):
     
     Argument:
 
-    edges -- a list of edges, each of shape [nb_of_edges, 3]
+    edges -- a list of edges, each of shape [nb_of_points, 2]
     """
     edges = edges.copy()
     sorted_edges = [edges.pop(0)]
