@@ -173,7 +173,12 @@ def optimize_path(input_data, threshold):
 
 
 def sort_edges(edges):
-    """Sort edges so as to minimize useless movements."""
+    """Sort edges so as to minimize useless movements.
+    
+    Argument:
+
+    edges -- a list of edges, each of shape [nb_of_edges, 3]
+    """
     edges = edges.copy()
     sorted_edges = [edges.pop(0)]
     for _ in range(len(edges) - 1):

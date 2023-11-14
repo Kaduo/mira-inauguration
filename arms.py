@@ -123,8 +123,11 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100):
     Draw the edges in order.
 
     Arguments:
+
     edges -- a list of point groups, each edge being of shape (3, number_of_points)
+
     dz -- the distance from the plane when the pen is lifted, in mm (default 2.0)
+    
     verbose -- if True, print the progress as a percentage
     """
 

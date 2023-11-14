@@ -18,10 +18,10 @@ import pickle
 
 
 from xarm.wrapper import XArmAPI
-from utils import find_surface, absolute_coords, optimize_path, image_thresholding
+from utils import find_surface, absolute_coords, optimize_path, image_thresholding, sort_edges
 from numpy import linalg as LA
 from photo2drawing import grouping_edges, plot_edges, rgb2edges
-from arms import get_photomaton_arm, calibrate
+from arms import get_photomaton_arm, calibrate, draw_edges
 from coordinates import CoordinatesConverter
 
 
@@ -116,7 +116,10 @@ while True:
         cv2.LINE_AA,
     )
 
-    # print(image_edge.shape)
+
+    print(edges[0].shape)
+    print(frame.shape)
+
     cv2.imshow("MIRA", im)
     key = cv2.waitKey(1) & 0xFF
 
@@ -127,59 +130,12 @@ while True:
     origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=1)
 
     converter = CoordinatesConverter(frame.shape[:2], origin, p1, p2)
+    converted_edges = converter.convert_list_of_points(edges)
+    sorted_edges = sort_edges(converted_edges)
     idx = 0
 
-    for group in edges:
-        new_points = converter.convert(group.T)
-        percentage = idx / len(edges)
-        print(int(percentage * 100))
 
-        x = new_points[0, 0]
-        y = new_points[1, 0]
-        z = new_points[2, 0]
-
-        arm.set_position(
-            x=x,
-            y=y,
-            z=z + 5,
-            roll=180,
-            pitch=0,
-            yaw=0,
-            speed=100,
-            is_radian=0,
-            wait=True,
-            radius=None,
-            relative=False,
-        )
-
-        for i in range(0, new_points.shape[1]):
-            x = new_points[0, i]
-            y = new_points[1, i]
-            z = new_points[2, i]
-            arm.set_position_aa(
-                [x, y, z, 180, 0, 0],
-                speed=100,
-                is_radian=0,
-                wait=False,
-                radius=None,
-                relative=False,
-                mvacc=2000,
-            )
-
-        idx += 1
-        arm.set_position(
-            x=0,
-            y=0,
-            z=5,
-            roll=0,
-            pitch=0,
-            yaw=0,
-            speed=100,
-            is_radian=0,
-            wait=True,
-            radius=None,
-            relative=True,
-        )
+    draw_edges(arm, sorted_edges)
 
     for letter in mira_data:
         data = np.array(mira_data[letter])
