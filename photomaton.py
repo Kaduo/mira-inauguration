@@ -131,7 +131,7 @@ while True:
 
     origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=0.25)
 
-    converter = CoordinatesConverter(edge_image.shape[:2], origin, p1, p2)
+    converter = CoordinatesConverter(list(reversed(edge_image.shape[:2])), origin, p1, p2)
     sorted_edges = sort_edges(edges)
     converted_edges = converter.convert_list_of_points(sorted_edges)
 
@@ -147,3 +147,5 @@ while True:
         letter = converter.convert(np.array(letter))
         draw_edge(arm, letter, wait=True, speed=50)
         print("after", letter)
+    
+    arm.set_position(x=origin[0], y = origin[1], z=origin[2], speed=100, wait=True)
