@@ -71,6 +71,7 @@ def photomaton_loop(cap, waiting_time=100):
                 time.sleep(0.01)
                 frame = get_frame(cap)
 
+            frame = get_frame(cap)
             cv2.imshow("MIRA", frame)
             key = cv2.waitKey(1) & 0xFF
             cv2.imwrite("image.jpg", frame)
@@ -99,12 +100,11 @@ above_p2 = np.array([415, -63, 193])
 
 while True:
     frame = photomaton_loop(cap, 0)
-    image = ski.io.imread("image.jpg")
 
-    edges, edge_image = rgb2edges(image, return_edge_image=True)
+    edges, edge_image = rgb2edges(frame, return_edge_image=True)
     edge_image = np.array(edge_image, dtype=np.uint8) * 255
     edge_image = cv2.cvtColor(edge_image, cv2.COLOR_GRAY2BGR)
-    superimposed = cv2.addWeighted(edge_image, 0.5, image, 0.5, 0)
+    superimposed = cv2.addWeighted(edge_image, 0.5, frame, 0.5, 0)
     im = cv2.putText(
         superimposed,
         "dessin en cours...",
@@ -126,12 +126,12 @@ while True:
 
     origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=1)
 
-    converter = CoordinatesConverter(image.shape[:2], origin, p1, p2)
+    converter = CoordinatesConverter(frame.shape[:2], origin, p1, p2)
     idx = 0
 
     for group in edges:
         new_points = converter.convert(group.T)
-        percentage = idx / len(draw)
+        percentage = idx / len(edges)
         print(int(percentage * 100))
 
         x = new_points[0, 0]
@@ -197,7 +197,7 @@ while True:
         data = (data - mi) / (ma - mi)
         print(data)
         data /= 4
-        data[1] += image.shape[0] / max(image.shape[0], image.shape[1]) + 0.04
+        data[1] += frame.shape[0] / max(frame.shape[0], frame.shape[1]) + 0.04
         # data[1] -= 0.3
         data[0] += 1 - 1 / 4
         new_points = converter.convert(data)
