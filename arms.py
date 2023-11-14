@@ -51,7 +51,7 @@ def calibrate_from_dimensions(arm, origin, dx, dy):
     return calibrate(arm, origin, p1, p2)
 
 
-def draw_edge(arm, edge, dz=2, speed=100):
+def draw_edge(arm, edge, dz=2, speed=100, wait=False):
     """
     1. Go above the first point in the edge.
     2. Lower the pen.
@@ -94,7 +94,7 @@ def draw_edge(arm, edge, dz=2, speed=100):
             [x, y, z, 180, 0, 0],
             speed=speed,
             is_radian=0,
-            wait=False,
+            wait=wait,
             radius=None,
             relative=False,
             mvacc=2000,
