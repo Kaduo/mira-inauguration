@@ -27,15 +27,13 @@ from coordinates import CoordinatesConverter
 
 import skimage as ski
 
-
-
 def process_frame(frame):
     res = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
     res = res[res.shape[0] // 2 :, :]
     return res
 
 def get_frame(cap):
-    ret, frame = cap.read()
+    _, frame = cap.read()
     return process_frame(frame)
 
 def drawing_in_progress(edge_image):
@@ -56,8 +54,6 @@ def drawing_in_progress(edge_image):
 
     cv2.imshow("MIRA", im)
     cv2.waitKey(1) & 0xFF
-
-
 
 def photomaton_loop(cap, waiting_time=100):
     selected = False
@@ -108,21 +104,19 @@ if not cap.isOpened():
     raise IOError("Cannot open webcam")
 
 
-number_of_lines = 300
-
 file = open("mira_coords.pkl", "rb")
 mira_data = pickle.load(file)
 
 arm = get_photomaton_arm()
 
 above_origin = np.array([260, -63, 193])
-above_p1 = np.array([260, 63, 193])
-above_p2 = np.array([415, -63, 193])
+above_p1 = np.array([415, -63, 193])
+above_p2 = np.array([260, 63, 193])
 
 while True:
     frame = photomaton_loop(cap, 0)
 
-    edges, edge_image = rgb2edges(frame, return_edge_image=True)
+    edges, edge_image = rgb2edges(frame, return_edge_image=True, nb_edges=700)
 
     drawing_in_progress(edge_image)
 
@@ -130,7 +124,7 @@ while True:
     arm.set_mode(0)
     arm.set_state(state=0)
 
-    origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=1)
+    origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=0.25)
 
     converter = CoordinatesConverter(frame.shape[:2], origin, p1, p2)
     sorted_edges = sort_edges(edges)

@@ -13,7 +13,7 @@ def find_short_and_long_side(shape):
 class CoordinatesConverter:
     """
     Arguments:
-    
+
     image_shape -- the dimensions of the original image: (height, width)
 
     origin, point1, point2 -- numpy arrays of shape (3, 1)
@@ -40,6 +40,8 @@ class CoordinatesConverter:
         image_ratio = image_long_length / image_short_length
         plane_ratio = plane_long_length / plane_short_length
 
+        shift = np.zeros((3,1))
+
         mat = np.zeros((2, 3))
 
         if image_ratio > plane_ratio:
@@ -47,14 +49,21 @@ class CoordinatesConverter:
             mat[image_short_idx] = (plane_short_vec * plane_long_length) / (
                 plane_short_length * image_long_length
             )
+            shift[plane_short_idx][0] = (plane_short_length - plane_long_length/image_ratio)*1/2
+
+
         else:
             mat[image_short_idx] = plane_short_vec / image_short_length
             mat[image_long_idx] = (plane_long_vec * plane_short_length) / (
                 plane_long_length * image_short_length
             )
+            shift[plane_long_idx][0] = (plane_long_length - plane_short_length*image_ratio)*1/2
+
 
         self.mat = mat.T
         self.origin = origin.T
+        self.shift = shift
+        print("ICICIIIIII", self.shift)
 
     def convert(self, points):
         """
@@ -63,7 +72,7 @@ class CoordinatesConverter:
 
         Returns a numpy array of shape (3, number_of_points)
         """
-        return np.dot(self.mat, points) + self.origin
+        return np.dot(self.mat, points) + self.origin + self.shift
 
     def convert_list_of_points(self, list_of_points):
         """
