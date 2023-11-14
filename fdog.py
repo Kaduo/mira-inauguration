@@ -159,6 +159,6 @@ def difference_of_gaussians(
         preserve_range=False,
     )
 
-    if p is not None:
+    if p is not None and p != 0:
         return (1 + p) * im1 - p * im2
     return im1 - im2
