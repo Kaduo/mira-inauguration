@@ -43,11 +43,16 @@ def rgb2edges(
     step=5,
     plot_preprocessing=False,
     plot_result=False,
+    return_edge_image=False
 ):
     edge_image = rgb2edge_image(image, plot_preprocessing)
-    return edge_image2edges(edge_image, min_edge_length=min_edge_length, step=step, nb_edges=nb_edges, plot_result=plot_result, plot_preprocessing=plot_preprocessing)
+    
+    res =  edge_image2edges(edge_image, min_edge_length=min_edge_length, step=step, nb_edges=nb_edges, plot_result=plot_result, plot_preprocessing=plot_preprocessing)
 
-    return res
+    if return_edge_image:
+        return res, edge_image
+    else:
+        return res
 
 def edge_image2edges(edge_image, min_edge_length=10, step=5, nb_edges=1000, plot_result=False, plot_preprocessing=False):
     edges = group_edges(edge_image, min_edge_length=min_edge_length, step=step)

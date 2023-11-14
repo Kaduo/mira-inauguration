@@ -101,11 +101,10 @@ while True:
     frame = photomaton_loop(cap, 0)
     image = ski.io.imread("image.jpg")
 
-    edge, draw = grouping_edges(image, number_of_lines)
-    edges = rgb2edges(image)
-    edge = np.array(edge, dtype=np.uint8) * 255
-    image_edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)
-    superimposed = cv2.addWeighted(image_edge, 0.5, image, 0.5, 0)
+    edges, edge_image = rgb2edges(image, return_edge_image=True)
+    edge_image = np.array(edge_image, dtype=np.uint8) * 255
+    edge_image = cv2.cvtColor(edge_image, cv2.COLOR_GRAY2BGR)
+    superimposed = cv2.addWeighted(edge_image, 0.5, image, 0.5, 0)
     im = cv2.putText(
         superimposed,
         "dessin en cours...",
