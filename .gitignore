@@ -5,7 +5,7 @@
 !mira_coords.pkl
 *.JPG
 .venv/
-!data/
+!data/*
 **/__pycache__/
 **/.DS_Store/
 data/.DS_Store
