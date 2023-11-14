@@ -55,6 +55,7 @@ def drawing_in_progress(edge_image):
     )
 
     cv2.imshow("MIRA", im)
+    cv2.waitKey(1) & 0xFF
 
 
 
