@@ -35,13 +35,19 @@ mira_data = pickle.load(file)
 
 arm = get_photomaton_arm()
 
+def process_frame(frame):
+    res = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    res = res[res.shape[0] // 2 :, :]
+    return res
+
+def get_frame(cap):
+    ret, frame = cap.read()
+    return process_frame(frame)
 
 def photomaton_loop(cap, waiting_time=100):
     selected = False
     while not selected:
-        _, frame = cap.read()
-        frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-        frame = frame[frame.shape[0] // 2 :, :].copy()
+        frame = get_frame(cap)
         im = cv2.putText(
             frame,
             "Portrait robot !",
@@ -69,9 +75,7 @@ def photomaton_loop(cap, waiting_time=100):
                 cv2.imshow("MIRA", im)
                 key = cv2.waitKey(1) & 0xFF
                 time.sleep(0.01)
-                _, frame = cap.read()
-                frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                frame = frame[frame.shape[0] // 2 :, :].copy()
+                frame = get_frame(cap)
 
             cv2.imshow("MIRA", frame)
             key = cv2.waitKey(1) & 0xFF
@@ -80,6 +84,7 @@ def photomaton_loop(cap, waiting_time=100):
         if key == ord("e"):
             cv2.destroyWindow("MIRA")
             return
+
 
 
 cap = cv2.VideoCapture(1)
