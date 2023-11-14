@@ -148,4 +148,4 @@ while True:
         draw_edge(arm, letter, wait=True, speed=50)
         print("after", letter)
     
-    arm.set_position(x=origin[0], y = origin[1], z=origin[2], speed=100, wait=True)
+    arm.set_position(x=0, y = 0, z=30, speed=100, wait=True, relative=True)
