@@ -27,13 +27,6 @@ from arms import get_photomaton_arm
 import skimage as ski
 
 
-number_of_lines = 700
-
-
-file = open("mira_coords.pkl", "rb")
-mira_data = pickle.load(file)
-
-arm = get_photomaton_arm()
 
 def process_frame(frame):
     res = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
@@ -91,7 +84,13 @@ cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
 
-selected = False
+
+number_of_lines = 700
+
+file = open("mira_coords.pkl", "rb")
+mira_data = pickle.load(file)
+
+arm = get_photomaton_arm()
 
 while True:
     frame = photomaton_loop(cap)
