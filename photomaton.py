@@ -150,7 +150,6 @@ while True:
     cv2.imshow("MIRA", im)
     key = cv2.waitKey(1) & 0xFF
 
-    arm = XArmAPI(ip, is_radian=True)
     arm.motion_enable(enable=True)
     arm.set_mode(0)
     arm.set_state(state=0)
