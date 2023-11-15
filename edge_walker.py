@@ -119,6 +119,7 @@ def group_edges(edge_image, min_edge_length=2, step=1):
     where_diff = np.where(diff)
 
     while len(where_diff[0]) > 0:
+        print(len(where_diff[0]))
         p = where_diff[0][0], where_diff[1][0]
         y, x = p[0], p[1]
         new_edge = whole_edge(x, y, is_edge)
