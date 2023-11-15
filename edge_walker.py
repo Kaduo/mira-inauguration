@@ -119,11 +119,13 @@ def group_edges(edge_image, min_edge_length=2, step=1):
     where_diff = np.where(diff)
 
     while len(where_diff[0]) > 0:
+        print(len(where_diff[0]))
         p = where_diff[0][0], where_diff[1][0]
         y, x = p[0], p[1]
         new_edge = whole_edge(x, y, is_edge)
         if len(new_edge) >= min_edge_length:
-            edges.append(np.array(new_edge[::step]))
+            edges.append(np.array(new_edge[::step] + [new_edge[-1]]))
+            print(edges[-1].shape)
 
         for p in new_edge:
             visited[p[1], p[0]] = 0

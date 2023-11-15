@@ -10,13 +10,13 @@ from photo2drawing import rgb2edges, edge_image2edges
 
 arm = get_big_drawing_arm()
 
-above_origin = np.array([226, -129, 155])
-above_p1 = np.array([600, -129, 155])
-above_p2 = np.array([226, 126, 160])
+above_origin = np.array([240, -107, 157])
+above_p1 = np.array([600, -107, 162])
+above_p2 = np.array([240, 158, 157])
 
 @concurrent.process
 def make_converter(image):
-    origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon = [1, 1, 0.5])
+    origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon = [2, 1, 0.5])
     converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
     return converter
 
@@ -31,13 +31,13 @@ def process_image(image, nb_edges=1000):
 
 if __name__=="__main__":
 
-    image = ski.io.imread("data/famille.jpeg")
+    image = ski.io.imread("data/st jerome.jpg")
     # future_edges = process_image(image)
     future_converter = make_converter(image)
 
     converter = future_converter.result()
 
-    with open("family_edges.pkl", "rb") as f:
+    with open("data/st jerome.jpg_edges.pkl", "rb") as f:
         edges = pickle.load(f)
         f.close()
     
