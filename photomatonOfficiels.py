@@ -114,38 +114,37 @@ above_origin = np.array([260, -63, 192])
 above_p1 = np.array([415, -63, 192])
 above_p2 = np.array([260, 63, 192])
 
-while True:
-    frame = photomaton_loop(cap, 0)
+frame = cv2.imread('sbraggia.jpeg')#photomaton_loop(cap, 0)
 
-    edge_image = rgb2edge_image(frame)
+edge_image = rgb2edge_image(frame)
 
-    edge_image[15*edge_image.shape[0]//16:, 3*edge_image.shape[1]//4:] = True
+edge_image[15*edge_image.shape[0]//16:, 3*edge_image.shape[1]//4:] = True
 
-    edges = edge_image2edges(edge_image, nb_edges = 1500)
+edges = edge_image2edges(edge_image, nb_edges = 1500)
 
-    drawing_in_progress(edge_image)
+drawing_in_progress(edge_image)
 
-    arm.motion_enable(enable=True)
-    arm.set_mode(0)
-    arm.set_state(state=0)
+arm.motion_enable(enable=True)
+arm.set_mode(0)
+arm.set_state(state=0)
 
-    origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], relative_epsilon=0.25, absolute_epsilon=0)
+origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], relative_epsilon=0.25, absolute_epsilon=0)
 
-    converter = CoordinatesConverter(list(reversed(edge_image.shape[:2])), origin, p1, p2)
-    sorted_edges = sort_edges(edges)
-    converted_edges = converter.convert_list_of_points(sorted_edges)
+converter = CoordinatesConverter(list(reversed(edge_image.shape[:2])), origin, p1, p2)
+sorted_edges = sort_edges(edges)
+converted_edges = converter.convert_list_of_points(sorted_edges)
 
-    draw_edges(arm, converted_edges)
+draw_edges(arm, converted_edges)
 
-    print("shape", edge_image.shape)
-    for letter in mira_data:
-        print("before", letter)
-        letter *= edge_image.shape[0]
-        letter /= 4
-        letter[1] += 15*edge_image.shape[1]//16
-        letter[0] += 3*edge_image.shape[0]//4
-        letter = converter.convert(np.array(letter))
-        draw_edge(arm, letter, wait=True, speed=50)
-        print("after", letter)
-    
-    arm.set_position(x=0, y = 0, z=30, speed=100, wait=True, relative=True)
+print("shape", edge_image.shape)
+for letter in mira_data:
+    print("before", letter)
+    letter *= edge_image.shape[0]
+    letter /= 4
+    letter[1] += 15*edge_image.shape[1]//16
+    letter[0] += 3*edge_image.shape[0]//4
+    letter = converter.convert(np.array(letter))
+    draw_edge(arm, letter, wait=True, speed=50)
+    print("after", letter)
+
+arm.set_position(x=0, y = 0, z=30, speed=100, wait=True, relative=True)
