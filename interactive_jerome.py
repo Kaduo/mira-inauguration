@@ -20,8 +20,7 @@ def big_dawg(image, sigma, p, dilation_size=1):
     edge_image_otsu = 1 - (thresh_otsu ^ dilation(thresh_otsu, footprint=footprint))
     thresh_mean = dog_response > threshold_mean(dog_response)
     edge_image_mean = 1 - (thresh_mean ^ dilation(thresh_mean, footprint=footprint))
-    canny_image = ski.feature.canny(thresh_otsu)
-    return dog_response, thresh_otsu, thresh_mean, edge_image_otsu, edge_image_mean, canny_image
+    return dog_response, thresh_otsu, thresh_mean, edge_image_otsu, edge_image_mean
 
 
 init_sigma = 5
@@ -29,9 +28,9 @@ init_p = 5
 init_dilation_size = 3
 
 
-image = ski.io.imread("data/maire.jpg")
+image = ski.io.imread("data/st jerome.jpg")
 
-dog_response, thresh_otsu, thresh_mean, edge_image_otsu, edge_image_mean, canny_image = big_dawg(
+dog_response, thresh_otsu, thresh_mean, edge_image_otsu, edge_image_mean = big_dawg(
     image, sigma=init_sigma, p=init_p, dilation_size=init_dilation_size
 )
 
