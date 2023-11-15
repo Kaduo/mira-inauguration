@@ -37,7 +37,7 @@ if __name__=="__main__":
 
     converter = future_converter.result()
 
-    with open("psyche edges.pkl", "rb") as f:
+    with open("data/st jerome.jpg_edges.pkl", "rb") as f:
         edges = pickle.load(f)
         f.close()
     
