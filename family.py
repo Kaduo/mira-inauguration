@@ -10,9 +10,9 @@ from photo2drawing import rgb2edges, edge_image2edges
 
 arm = get_big_drawing_arm()
 
-above_origin = np.array([217, -116, 157])
-above_p1 = np.array([502, -116, 157])
-above_p2 = np.array([217, 133, 157])
+above_origin = np.array([226, -129, 155])
+above_p1 = np.array([600, -129, 155])
+above_p2 = np.array([226, 126, 160])
 
 @concurrent.process
 def make_converter(image):
