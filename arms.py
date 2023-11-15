@@ -61,7 +61,7 @@ def calibrate(arm, points, Rx=180, Ry=0, Rz=0, relative_epsilon=None, absolute_e
             new_relative_epsilon = 0
         else:
             new_relative_epsilon = relative_epsilon
-        for re, ae, p in points:
+        for p in points:
             x, y, z = p
             res.append(np.array(find_surface(arm, x, y, z, Rx, Ry, Rz, relative_epsilon=new_relative_epsilon, absolute_epsilon=absolute_epsilon)[0][:3]).reshape((1, -1)))
 
