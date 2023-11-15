@@ -13,3 +13,4 @@ data/.DS_Store
 .DS_Store
 !mira_normalized.pkl
 !mira_correct.pkl
+.venv/*

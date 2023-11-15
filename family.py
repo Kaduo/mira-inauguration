@@ -4,6 +4,7 @@ import numpy as np
 from arms import get_big_drawing_arm, calibrate, draw_edges
 import skimage as ski
 from pebble import concurrent
+import pickle
 
 from photo2drawing import rgb2edges, edge_image2edges
 
@@ -15,7 +16,7 @@ above_p2 = np.array([226, 126, 160])
 
 @concurrent.process
 def make_converter(image):
-    origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], relative_epsilon=0.05)
+    origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon = [1, 1, 0.5])
     converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
     return converter
 
@@ -30,12 +31,15 @@ def process_image(image, nb_edges=1000):
 
 if __name__=="__main__":
 
-    image = ski.io.imread("data/st jerome.png")
-    future_edges = process_image(image)
+    image = ski.io.imread("data/famille.jpeg")
+    # future_edges = process_image(image)
     future_converter = make_converter(image)
 
     converter = future_converter.result()
-    edges = future_edges.result()
+
+    with open("family_edges.pkl", "rb") as f:
+        edges = pickle.load(f)
+        f.close()
     
     edges = converter.convert_list_of_points(edges)
     draw_edges(arm, edges, verbose=True)

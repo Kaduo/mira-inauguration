@@ -125,11 +125,7 @@ while True:
 
     drawing_in_progress(edge_image)
 
-    arm.motion_enable(enable=True)
-    arm.set_mode(0)
-    arm.set_state(state=0)
-
-    origin, p1, p2 = calibrate(arm, above_origin, above_p1, above_p2, epsilon=0.25)
+    origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], relative_epsilon=0.25)
 
     converter = CoordinatesConverter(list(reversed(edge_image.shape[:2])), origin, p1, p2)
     sorted_edges = sort_edges(edges)

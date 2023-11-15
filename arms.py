@@ -25,23 +25,45 @@ def get_arm(ip):
 
 
 def get_photomaton_arm():
-    return get_arm(get_ip("photomaton"))
+    arm = get_arm(get_ip("photomaton"))
+    enable_arm(arm)
+    return arm
 
 
 def get_big_drawing_arm():
-    return get_arm(get_ip("big_drawing"))
+    arm = get_arm(get_ip("big_drawing"))
+    enable_arm(arm)
+    return arm
+
+def enable_arm(arm):
+    arm.motion_enable(enable=True)
+    arm.set_mode(0)
+    arm.set_state(state=0)
 
 
-def calibrate(arm, origin, p1, p2, Rx=180, Ry=0, Rz=0, epsilon=1):
+def calibrate(arm, points, Rx=180, Ry=0, Rz=0, relative_epsilon=None, absolute_epsilon=1):
     """
     Return a list of the calibrated coordinates, with the origin in first.
     """
     res = []
+    
+    try:
+        if relative_epsilon is None:
+            new_relative_epsilon = [0]*len(points)
+        else:
+            new_relative_epsilon = relative_epsilon
+        for re, ae, p in zip(new_relative_epsilon, absolute_epsilon, points):
+            x, y, z = p
+            res.append(np.array(find_surface(arm, x, y, z, Rx, Ry, Rz, relative_epsilon=re, absolute_epsilon=ae)[0][:3]).reshape((1, -1)))
 
-    for p in [origin, p1, p2]:
-
-        x, y, z = p
-        res.append(np.array(find_surface(arm, x, y, z, Rx, Ry, Rz, epsilon=epsilon)[0][:3]).reshape((1, -1)))
+    except TypeError:
+        if relative_epsilon is None:
+            new_relative_epsilon = 0
+        else:
+            new_relative_epsilon = relative_epsilon
+        for re, ae, p in points:
+            x, y, z = p
+            res.append(np.array(find_surface(arm, x, y, z, Rx, Ry, Rz, relative_epsilon=new_relative_epsilon, absolute_epsilon=absolute_epsilon)[0][:3]).reshape((1, -1)))
 
     return res
 

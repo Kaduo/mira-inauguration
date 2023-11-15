@@ -123,7 +123,7 @@ def group_edges(edge_image, min_edge_length=2, step=1):
         y, x = p[0], p[1]
         new_edge = whole_edge(x, y, is_edge)
         if len(new_edge) >= min_edge_length:
-            edges.append(np.array(new_edge[::step]))
+            edges.append(np.array(new_edge[::step] + new_edge[-1]))
 
         for p in new_edge:
             visited[p[1], p[0]] = 0
