@@ -12,7 +12,7 @@ from itertools import cycle
 from fdog import difference_of_gaussians
 
 
-def rgb2edge_image(image, plot=False):
+def rgb2edge_image(image, plot=False, bilateral=True):
     """
     Convert an RGB image into a binary image of its edges.
     """
@@ -20,7 +20,10 @@ def rgb2edge_image(image, plot=False):
         gray_image = ski.color.rgb2gray(image)
     except IndexError:
         gray_image = ski.color.rgb2gray(ski.color.rgba2rgb(image))
-    blurred_image = ski.restoration.denoise_bilateral(gray_image, sigma_color=0.05, sigma_spatial=2)
+    if bilateral:
+        blurred_image = ski.restoration.denoise_bilateral(gray_image, sigma_color=0.05, sigma_spatial=1.5)
+    else:
+        blurred_image = gray_image
     edge_image = ski.feature.canny(blurred_image)
     skeletonized_image = 1 - skeletonize(edge_image)
 
