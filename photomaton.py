@@ -130,9 +130,9 @@ with open("mira_correct.pkl", "rb") as f:
 
 arm = get_photomaton_arm()
 
-above_origin = np.array([260, -63, 192])
-above_p1 = np.array([415, -63, 192])
-above_p2 = np.array([260, 63, 192])
+above_origin = np.array([310, -60, 142])
+above_p1 = np.array([448, -60, 142])
+above_p2 = np.array([310, 50, 142])
 
 while True:
     frame = photomaton_loop(cap, 70)
