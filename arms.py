@@ -164,6 +164,11 @@ def draw_edge(arm, edge, dz=2, speed=100, wait=False):
     return len(edge)
 
 
+def wait_for_input(password):
+    while input(f'\nPlease enter "{password}" to restart : ') != password:
+        continue
+
+
 def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None, pause_after=None):
     """
     Draw the edges in order.
@@ -178,10 +183,6 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None,
     """
 
     already_paused = False
-
-    def wait_for_input(password):
-        while input(f'\nPlease enter "{password}" to restart : ') != password:
-            continue
 
     if pause_after is not None:
         start = time()

@@ -28,7 +28,7 @@ init_p = 5
 init_dilation_size = 3
 
 
-image = ski.io.imread("data/vinciguerra.jpeg")
+image = ski.io.imread("data/st jerome.jpg")
 
 dog_response, thresh_otsu, thresh_mean, edge_image_otsu, edge_image_mean = big_dawg(
     image, sigma=init_sigma, p=init_p, dilation_size=init_dilation_size

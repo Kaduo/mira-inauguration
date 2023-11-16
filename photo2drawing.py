@@ -9,6 +9,7 @@ from skimage.morphology import skeletonize
 from edge_walker import group_edges
 import matplotlib.colors as mcolors
 from itertools import cycle
+from fdog import difference_of_gaussians
 
 
 def rgb2edge_image(image, plot=False):
@@ -18,7 +19,7 @@ def rgb2edge_image(image, plot=False):
     try:
         gray_image = ski.color.rgb2gray(image)
     except IndexError:
-        gray_image=ski.color.rgb2gray(ski.color.rgba2rgb(image))
+        gray_image = ski.color.rgb2gray(ski.color.rgba2rgb(image))
     blurred_image = ski.restoration.denoise_bilateral(gray_image, sigma_color=0.05, sigma_spatial=2)
     edge_image = ski.feature.canny(blurred_image)
     skeletonized_image = 1 - skeletonize(edge_image)
@@ -46,18 +47,33 @@ def rgb2edges(
     step=5,
     plot_preprocessing=False,
     plot_result=False,
-    return_edge_image=False
+    return_edge_image=False,
 ):
     edge_image = rgb2edge_image(image, plot_preprocessing)
-    
-    res =  edge_image2edges(edge_image, min_edge_length=min_edge_length, step=step, nb_edges=nb_edges, plot_result=plot_result, plot_preprocessing=plot_preprocessing)
+
+    res = edge_image2edges(
+        edge_image,
+        min_edge_length=min_edge_length,
+        step=step,
+        nb_edges=nb_edges,
+        plot_result=plot_result,
+        plot_preprocessing=plot_preprocessing,
+    )
 
     if return_edge_image:
         return res, edge_image
     else:
         return res
 
-def edge_image2edges(edge_image, min_edge_length=10, step=5, nb_edges=1000, plot_result=False, plot_preprocessing=False):
+
+def edge_image2edges(
+    edge_image,
+    min_edge_length=10,
+    step=5,
+    nb_edges=1000,
+    plot_result=False,
+    plot_preprocessing=False,
+):
     edges = group_edges(edge_image, min_edge_length=min_edge_length, step=step)
 
     # Sort edges by length
@@ -143,3 +159,21 @@ def plot_edges(edges, use_different_colors=True):
             preceding_point = p.copy()
 
     plt.gca().set_aspect("equal")
+
+
+def rgb2dog_edge_image(image, low_sigma, high_sigma=None, p=0, thresh_technique="mean"):
+    if high_sigma is None:
+        high_sigma = low_sigma * 1.7
+
+    dog_image = difference_of_gaussians(image, low_sigma, high_sigma, p=p)
+    match thresh_technique:
+        case "otsu":
+            thresh_image = dog_image > ski.filters.threshold_otsu(dog_image)
+        case _:
+            thresh_image = dog_image > ski.filters.threshold_mean(dog_image)
+
+    dilated_image = ski.morphology.dilation(thresh_image)
+
+    abs_diff = 1 - thresh_image ^ dilated_image
+
+    return abs_diff

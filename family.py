@@ -1,10 +1,17 @@
 from coordinates import CoordinatesConverter
 from utils import sort_edges
 import numpy as np
-from arms import get_big_drawing_arm, calibrate, draw_edges
+from arms import get_big_drawing_arm, calibrate, draw_edges, wait_for_input
 import skimage as ski
 from pebble import concurrent
 import pickle
+import signal
+import sys
+
+
+def signal_handler(sig, frame):
+    wait_for_input("continue")
+
 
 from photo2drawing import rgb2edges, edge_image2edges
 
@@ -32,6 +39,7 @@ def process_image(image, nb_edges=1000):
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handler)
     image = ski.io.imread("data/st jerome.jpg")
     # future_edges = process_image(image)
     future_converter = make_converter(image)
