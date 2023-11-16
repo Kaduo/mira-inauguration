@@ -78,7 +78,7 @@ if __name__=="__main__":
         pickle.dump(edges, f)
         f.close()
 
-    draw_edges(arm, edges, verbose=True)
+    draw_edges(arm, edges, verbose=True, logging=True)
 
     end = time()
 
