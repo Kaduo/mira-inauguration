@@ -42,5 +42,16 @@ if __name__ == "__main__":
         edges = pickle.load(f)
         f.close()
 
+    # Draw border
+    border_edges = np.array(
+        [
+            converter.origin,
+            converter.p1,
+            converter.p1 + (converter.p2 - converter.origin),
+            converter.p2,
+        ]
+    ).T
+    draw_edges(arm, border_edges)
+
     edges = converter.convert_list_of_points(edges)
     draw_edges(arm, edges, verbose=True)
