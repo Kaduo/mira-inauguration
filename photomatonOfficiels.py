@@ -110,11 +110,11 @@ with open("mira_correct.pkl", "rb") as f:
 
 arm = get_photomaton_arm()
 
-above_origin = np.array([260, -63, 192])
-above_p1 = np.array([415, -63, 192])
-above_p2 = np.array([260, 63, 192])
+above_origin = np.array([420, -80, 194])
+above_p1 = np.array([560, -80, 194])
+above_p2 = np.array([420, 50, 194])
 
-frame = ski.io.imread('data/vinciguerra.jpeg')#photomaton_loop(cap, 0)
+frame = ski.io.imread('data/marcangeli.jpeg')#photomaton_loop(cap, 0)
 
 edge_image = rgb2edge_image(frame)
 
@@ -128,7 +128,7 @@ arm.motion_enable(enable=True)
 arm.set_mode(0)
 arm.set_state(state=0)
 
-origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon=[1,1,2])
+origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon=[2,2,3])
 converter = CoordinatesConverter(list(reversed(edge_image.shape[:2])), origin, p1, p2)
 sorted_edges = sort_edges(edges)
 converted_edges = converter.convert_list_of_points(sorted_edges)
