@@ -183,9 +183,10 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None,
     """
 
     if logging:
-        log = open("log.txt", "a")
+        log = open(f"log {time()}.txt", "a")
 
         log.write("\n\nBeginning NEW session\n\n")
+        log.flush()
 
     already_paused = False
 
@@ -203,6 +204,7 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None,
             print(f"We're about to draw edge number {i} !")
             if logging:
                 log.write(f"\nWe're about to draw edge number {i} !")
+                log.flush()
 
         if not already_paused:
             if pause_after is not None:
