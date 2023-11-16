@@ -169,7 +169,7 @@ def wait_for_input(password):
         continue
 
 
-def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None, pause_after=None):
+def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None, pause_after=None, logging=False):
     """
     Draw the edges in order.
 
@@ -182,9 +182,10 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None,
     verbose -- if True, print the progress as a percentage
     """
 
-    log = open("log.txt", "a")
+    if logging:
+        log = open("log.txt", "a")
 
-    log.write("\n\nBeginning NEW session\n\n")
+        log.write("\n\nBeginning NEW session\n\n")
 
     already_paused = False
 
@@ -200,7 +201,8 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None,
         if verbose:
             print(f"{nb_points_drawn*100/nb_points}% complete...")
             print(f"We're about to draw edge number {i} !")
-            log.write(f"\nWe're about to draw edge number {i} !")
+            if logging:
+                log.write(f"\nWe're about to draw edge number {i} !")
 
         if not already_paused:
             if pause_after is not None:
