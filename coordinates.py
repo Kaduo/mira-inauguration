@@ -66,9 +66,8 @@ class CoordinatesConverter:
         self.origin = origin.T
         self.shift = shift
 
-        self.origin = origin
-        self.p1 = point1
-        self.p2 = point2
+        self.p1 = point1.T
+        self.p2 = point2.T
 
     def convert(self, points):
         """

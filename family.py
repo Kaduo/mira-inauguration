@@ -26,7 +26,7 @@ above_p2 = np.array([220, 131, 142])
 @concurrent.process
 def make_converter(image):
     origin, p1, p2 = calibrate(
-        arm, [above_origin, above_p1, above_p2], absolute_epsilon=[1, 1, 0.5]
+        arm, [above_origin, above_p1, above_p2], absolute_epsilon=[1, 1, 1]
     )
     converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
     return converter
@@ -47,8 +47,7 @@ if __name__=="__main__":
         print(len(edges))
         f.close()
     
-    # 9h25
-    start = time()
+    # 13h16
 
     signal.signal(signal.SIGINT, signal_handler)
     image = ski.io.imread("data/st jerome.jpg")
@@ -64,11 +63,15 @@ if __name__=="__main__":
             converter.p1,
             converter.p1 + (converter.p2 - converter.origin),
             converter.p2,
+            converter.origin
         ]
-    ).T
+    ).T[0]
+    print(border_edge.shape)
     draw_edge(arm, border_edge)
     wait_for_input("sfdkggienc")
 
+
+    start = time()
     edges = converter.convert_list_of_points(edges)
     draw_edges(arm, edges, verbose=True)
 
