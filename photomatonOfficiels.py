@@ -111,9 +111,9 @@ with open("mira_correct.pkl", "rb") as f:
 
 arm = get_photomaton_arm()
 
-above_origin = np.array([420, -80, 194])
-above_p1 = np.array([560, -80, 194])
-above_p2 = np.array([420, 50, 194])
+above_origin = np.array([305, -60, 138])
+above_p1 = np.array([435, -60, 138])
+above_p2 = np.array([305, 60, 138])
 
 frame = ski.io.imread('data/leccia.jpg')#photomaton_loop(cap, 0)
 

@@ -82,7 +82,7 @@ def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, absolute_epsilon=1, relative_
     arm.set_position(
         x=x,
         y=y,
-        z=z - 10,
+        z=z - 100,
         roll=Rx,
         pitch=Ry,
         yaw=Rz,
