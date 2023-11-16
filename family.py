@@ -1,7 +1,7 @@
 from coordinates import CoordinatesConverter
 from utils import sort_edges
 import numpy as np
-from arms import get_big_drawing_arm, calibrate, draw_edges, wait_for_input
+from arms import get_big_drawing_arm, calibrate, draw_edges, wait_for_input, draw_edge
 import skimage as ski
 from pebble import concurrent
 import pickle
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         f.close()
 
     # Draw border
-    border_edges = np.array(
+    border_edge = np.array(
         [
             converter.origin,
             converter.p1,
@@ -59,7 +59,8 @@ if __name__ == "__main__":
             converter.p2,
         ]
     ).T
-    draw_edges(arm, border_edges)
+    draw_edge(arm, border_edge)
+    wait_for_input("sfdkggienc")
 
     edges = converter.convert_list_of_points(edges)
     draw_edges(arm, edges, verbose=True)
