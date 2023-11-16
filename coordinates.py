@@ -40,7 +40,7 @@ class CoordinatesConverter:
         image_ratio = image_long_length / image_short_length
         plane_ratio = plane_long_length / plane_short_length
 
-        shift = np.zeros((3,1))
+        shift = np.zeros((3, 1))
 
         mat = np.zeros((2, 3))
 
@@ -49,20 +49,26 @@ class CoordinatesConverter:
             mat[image_short_idx] = (plane_short_vec * plane_long_length) / (
                 plane_short_length * image_long_length
             )
-            shift[plane_short_idx,0] = (plane_short_length - plane_long_length/image_ratio)*1/2
-
+            shift[plane_short_idx, 0] = (
+                (plane_short_length - plane_long_length / image_ratio) * 1 / 2
+            )
 
         else:
             mat[image_short_idx] = plane_short_vec / image_short_length
             mat[image_long_idx] = (plane_long_vec * plane_short_length) / (
                 plane_long_length * image_short_length
             )
-            shift[plane_long_idx, 0] = (plane_long_length - plane_short_length*image_ratio)*1/2
-
+            shift[plane_long_idx, 0] = (
+                (plane_long_length - plane_short_length * image_ratio) * 1 / 2
+            )
 
         self.mat = mat.T
         self.origin = origin.T
         self.shift = shift
+
+        self.origin = origin
+        self.p1 = point1
+        self.p2 = point2
 
     def convert(self, points):
         """
