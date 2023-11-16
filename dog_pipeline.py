@@ -7,7 +7,7 @@ def rgb2dog_edge_image(image, low_sigma, high_sigma=None, p=0, thresh_technique=
     if high_sigma is None:
         high_sigma = low_sigma * 1.7
 
-    dog_image = difference_of_gaussians(image, low_sigma, high_sigma, p=p)
+    dog_image = ski.color.rgb2gray(difference_of_gaussians(image, low_sigma, high_sigma, p=p))
     match thresh_technique:
         case "otsu":
             thresh_image = dog_image > ski.filters.threshold_otsu(dog_image)
