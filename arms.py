@@ -177,6 +177,12 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None,
     verbose -- if True, print the progress as a percentage
     """
 
+    already_paused = False
+
+    def wait_for_input(password):
+        while input(f'\nPlease enter "{password}" to restart : ') != password:
+            continue
+
     if pause_after is not None:
         start = time()
 
@@ -195,8 +201,8 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None,
                 duration = current - start
                 if duration > pause_after:
                     already_paused = True
-                    # TODO : pause
+                    wait_for_input("continue")
 
             elif pause_at_edge_nb is not None and i > pause_at_edge_nb:
                 already_paused = True
-                # TODO pause
+                wait_for_input("continue")
