@@ -114,7 +114,7 @@ above_origin = np.array([420, -80, 194])
 above_p1 = np.array([560, -80, 194])
 above_p2 = np.array([420, 50, 194])
 
-frame = ski.io.imread('data/marcangeli.jpeg')#photomaton_loop(cap, 0)
+frame = ski.io.imread('data/patxi.jpg')#photomaton_loop(cap, 0)
 
 edge_image = rgb2edge_image(frame)
 
