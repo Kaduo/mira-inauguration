@@ -73,6 +73,11 @@ if __name__=="__main__":
 
     start = time()
     edges = converter.convert_list_of_points(edges)
+
+    with open(f"converted edges for jerome {time()}.pkl", "wb") as f:
+        pickle.dump(edges, f)
+        f.close()
+
     draw_edges(arm, edges, verbose=True)
 
     end = time()
