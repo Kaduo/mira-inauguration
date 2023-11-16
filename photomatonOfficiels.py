@@ -115,7 +115,7 @@ above_origin = np.array([420, -80, 194])
 above_p1 = np.array([560, -80, 194])
 above_p2 = np.array([420, 50, 194])
 
-frame = ski.io.imread('data/simoni.jpeg')#photomaton_loop(cap, 0)
+frame = ski.io.imread('data/leccia.jpg')#photomaton_loop(cap, 0)
 
 # edge_image = rgb2dog_edge_image(frame, low_sigma=1.07, p=10.1, thresh_technique="otsu")
 # edge_image = rgb2edge_image(frame, bilateral=False)
@@ -124,9 +124,9 @@ frame = ski.io.imread('data/simoni.jpeg')#photomaton_loop(cap, 0)
 
 # print((edge_image.astype(int)*255).shape)
 
-# ski.io.imsave("manual simoni.png", (edge_image*255).astype(np.uint8))
+# ski.io.imsave("manual leccia.png", (edge_image*255).astype(np.uint8))
 
-edge_image = (ski.io.imread("manual simoni.png")).astype(bool)
+edge_image = (ski.io.imread("manual leccia.png")).astype(bool)
 edges = edge_image2edges(edge_image, nb_edges = 1000)
 
 drawing_in_progress(edge_image)
@@ -135,7 +135,7 @@ arm.motion_enable(enable=True)
 arm.set_mode(0)
 arm.set_state(state=0)
 
-origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon=[4,2,3])
+origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon=[4,3,4])
 converter = CoordinatesConverter(list(reversed(edge_image.shape[:2])), origin, p1, p2)
 sorted_edges = sort_edges(edges)
 converted_edges = converter.convert_list_of_points(sorted_edges)

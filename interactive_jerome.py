@@ -21,6 +21,7 @@ def big_dawg(image, sigma, p, dilation_size=1):
     thresh_mean = dog_response > threshold_mean(dog_response)
     edge_image_mean = 1 - (thresh_mean ^ dilation(thresh_mean, footprint=footprint))
     canny_edge_image = 1 - ski.feature.canny(ski.color.rgb2gray(image))
+    # canny_edge_image = edge_image_mean
     return dog_response, thresh_otsu, thresh_mean, edge_image_otsu, edge_image_mean, canny_edge_image
 
 
@@ -29,7 +30,7 @@ init_p = 5
 init_dilation_size = 3
 
 
-image = ski.io.imread("data/simoni.jpeg")
+image = ski.io.imread("data/leccia.jpg")
 
 dog_response, thresh_otsu, thresh_mean, edge_image_otsu, edge_image_mean , canny_edge_image= big_dawg(
     image, sigma=init_sigma, p=init_p, dilation_size=init_dilation_size
