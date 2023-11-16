@@ -10,6 +10,7 @@ import signal
 import sys
 
 
+
 def signal_handler(sig, frame):
     wait_for_input("continue")
 
@@ -26,7 +27,7 @@ above_p2 = np.array([220, 131, 142])
 @concurrent.process
 def make_converter(image):
     origin, p1, p2 = calibrate(
-        arm, [above_origin, above_p1, above_p2], absolute_epsilon=[1, 1, 0.5]
+        arm, [above_origin, above_p1, above_p2], absolute_epsilon=[1, 1, 1]
     )
     converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
     return converter
@@ -41,36 +42,51 @@ def process_image(image, nb_edges=1000):
 
 if __name__=="__main__":
 
-    with open("data/jerome 2 edges.pkl", "rb") as f:
-        edges = pickle.load(f)
-        print("HEEREE")
-        print(len(edges))
-        f.close()
-    
-    # 9h25
-    start = time()
+    re_calibrate = True
+    draw_borders = True
+    start_from = 0
 
     signal.signal(signal.SIGINT, signal_handler)
-    image = ski.io.imread("data/st jerome.jpg")
-    # future_edges = process_image(image)
-    future_converter = make_converter(image)
 
-    converter = future_converter.result()
+    if re_calibrate:
+        with open("data/jerome 2 edges.pkl", "rb") as f:
+            edges = pickle.load(f)
+            f.close()
 
-    # Draw border
-    border_edge = np.array(
-        [
-            converter.origin,
-            converter.p1,
-            converter.p1 + (converter.p2 - converter.origin),
-            converter.p2,
-        ]
-    ).T
-    draw_edge(arm, border_edge)
-    wait_for_input("sfdkggienc")
+        image = ski.io.imread("data/st jerome.jpg")
+        # future_edges = process_image(image)
+        future_converter = make_converter(image)
 
-    edges = converter.convert_list_of_points(edges)
-    draw_edges(arm, edges, verbose=True)
+        converter = future_converter.result()
+
+        if draw_borders:
+            # Draw border
+            border_edge = np.array(
+                [
+                    converter.origin,
+                    converter.p1,
+                    converter.p1 + (converter.p2 - converter.origin),
+                    converter.p2,
+                    converter.origin
+                ]
+            ).T[0]
+            draw_edge(arm, border_edge)
+            wait_for_input("sfdkggienc")
+
+        edges = converter.convert_list_of_points(edges)
+
+        with open(f"converted edges for jerome {time()}.pkl", "wb") as f:
+            pickle.dump(edges, f)
+            f.close()
+    
+    else:
+        with open(f"converted edges for jerome 1700148228.305297.pkl", "rb") as f:
+            edges = pickle.load(f)
+            f.close()
+
+    start = time()
+
+    draw_edges(arm, edges[start_from:], verbose=True, logging=True)
 
     end = time()
 
