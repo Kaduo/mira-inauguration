@@ -5,6 +5,7 @@ Functions that deal with calibrating and moving the robot arm.
 from xarm.wrapper import XArmAPI
 from utils import find_surface
 import numpy as np
+from time import time
 
 ip1 = "192.168.1.207"
 ip2 = "192.168.1.213"
@@ -35,6 +36,7 @@ def get_big_drawing_arm():
     enable_arm(arm)
     return arm
 
+
 def enable_arm(arm):
     arm.motion_enable(enable=True)
     arm.set_mode(0)
@@ -49,12 +51,18 @@ def calibrate(arm, points, Rx=180, Ry=0, Rz=0, relative_epsilon=None, absolute_e
 
     try:
         if relative_epsilon is None:
-            new_relative_epsilon = [0]*len(points)
+            new_relative_epsilon = [0] * len(points)
         else:
             new_relative_epsilon = relative_epsilon
         for re, ae, p in zip(new_relative_epsilon, absolute_epsilon, points):
             x, y, z = p
-            res.append(np.array(find_surface(arm, x, y, z, Rx, Ry, Rz, relative_epsilon=re, absolute_epsilon=ae)[0][:3]).reshape((1, -1)))
+            res.append(
+                np.array(
+                    find_surface(
+                        arm, x, y, z, Rx, Ry, Rz, relative_epsilon=re, absolute_epsilon=ae
+                    )[0][:3]
+                ).reshape((1, -1))
+            )
 
     except TypeError:
         print("what ??")
@@ -64,9 +72,24 @@ def calibrate(arm, points, Rx=180, Ry=0, Rz=0, relative_epsilon=None, absolute_e
             new_relative_epsilon = relative_epsilon
         for p in points:
             x, y, z = p
-            res.append(np.array(find_surface(arm, x, y, z, Rx, Ry, Rz, relative_epsilon=new_relative_epsilon, absolute_epsilon=absolute_epsilon)[0][:3]).reshape((1, -1)))
+            res.append(
+                np.array(
+                    find_surface(
+                        arm,
+                        x,
+                        y,
+                        z,
+                        Rx,
+                        Ry,
+                        Rz,
+                        relative_epsilon=new_relative_epsilon,
+                        absolute_epsilon=absolute_epsilon,
+                    )[0][:3]
+                ).reshape((1, -1))
+            )
 
     return res
+
 
 def calibrate_from_dimensions(arm, origin, dx, dy):
     p1 = origin + np.array([dx, 0, 0])
@@ -141,7 +164,7 @@ def draw_edge(arm, edge, dz=2, speed=100, wait=False):
     return len(edge)
 
 
-def draw_edges(arm, edges, dz=2, verbose=True, speed=100):
+def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None, pause_after=None):
     """
     Draw the edges in order.
 
@@ -150,15 +173,30 @@ def draw_edges(arm, edges, dz=2, verbose=True, speed=100):
     edges -- a list of point groups, each edge being of shape (3, number_of_points)
 
     dz -- the distance from the plane when the pen is lifted, in mm (default 2.0)
-    
+
     verbose -- if True, print the progress as a percentage
     """
+
+    if pause_after is not None:
+        start = time()
 
     nb_points_drawn = 0
     nb_points = sum([len(edge) for edge in edges])
 
-    for edge in edges:
+    for i, edge in enumerate(edges):
         nb_points_drawn += draw_edge(arm, edge, dz, speed)
 
         if verbose:
             print(f"{nb_points_drawn*100/nb_points}% complete...")
+
+        if not already_paused:
+            if pause_after is not None:
+                current = time()
+                duration = current - start
+                if duration > pause_after:
+                    already_paused = True
+                    # TODO : pause
+
+            elif pause_at_edge_nb is not None and i > pause_at_edge_nb:
+                already_paused = True
+                # TODO pause
