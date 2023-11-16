@@ -1,10 +1,11 @@
 from coordinates import CoordinatesConverter
 from utils import sort_edges
 import numpy as np
-from arms import get_big_drawing_arm, calibrate, draw_edges, wait_for_input
+from arms import get_big_drawing_arm, calibrate, draw_edges, wait_for_input, draw_edge
 import skimage as ski
 from pebble import concurrent
 import pickle
+from time import time
 import signal
 import sys
 
@@ -17,9 +18,9 @@ from photo2drawing import rgb2edges, edge_image2edges
 
 arm = get_big_drawing_arm()
 
-above_origin = np.array([270, -107, 160])
-above_p1 = np.array([630, -107, 162])
-above_p2 = np.array([270, 158, 157])
+above_origin = np.array([220, -123, 142])
+above_p1 = np.array([527, -123, 146])
+above_p2 = np.array([220, 131, 142])
 
 
 @concurrent.process
@@ -38,7 +39,17 @@ def process_image(image, nb_edges=1000):
     return edges
 
 
-if __name__ == "__main__":
+if __name__=="__main__":
+
+    with open("data/jerome 2 edges.pkl", "rb") as f:
+        edges = pickle.load(f)
+        print("HEEREE")
+        print(len(edges))
+        f.close()
+    
+    # 9h25
+    start = time()
+
     signal.signal(signal.SIGINT, signal_handler)
     image = ski.io.imread("data/st jerome.jpg")
     # future_edges = process_image(image)
@@ -46,12 +57,8 @@ if __name__ == "__main__":
 
     converter = future_converter.result()
 
-    with open("data/jerome 2 edges.pkl", "rb") as f:
-        edges = pickle.load(f)
-        f.close()
-
     # Draw border
-    border_edges = np.array(
+    border_edge = np.array(
         [
             converter.origin,
             converter.p1,
@@ -59,7 +66,12 @@ if __name__ == "__main__":
             converter.p2,
         ]
     ).T
-    draw_edges(arm, border_edges)
+    draw_edge(arm, border_edge)
+    wait_for_input("sfdkggienc")
 
     edges = converter.convert_list_of_points(edges)
     draw_edges(arm, edges, verbose=True)
+
+    end = time()
+
+    print(end - start)
