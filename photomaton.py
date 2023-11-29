@@ -144,7 +144,7 @@ while True:
 
     edge_image[15*edge_image.shape[0]//16:, 3*edge_image.shape[1]//4:] = True
 
-    edges = edge_image2edges(edge_image, nb_edges = 10)
+    edges = edge_image2edges(edge_image, nb_edges = 700)
 
     drawing_in_progress(edge_image)
 
