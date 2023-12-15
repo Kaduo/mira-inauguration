@@ -1,15 +1,20 @@
 import tomllib
-from arms import get_arm, calibrate, draw_edges
+from arms import get_arm, calibrate, draw_edges, wait_for_input
 import skimage as ski
 from photo2drawing import rgb2edge_image, rgb2edges
 from photomaton import photomaton_loop
 from coordinates import CoordinatesConverter
 from utils import sort_edges
+import signal
 import cv2
 
 
 def load_config():
     return tomllib.load("config.toml")
+
+
+def signal_handler(sig, frame):
+    wait_for_input("continue")
 
 
 def calibrate_from_config(arm, config):
@@ -72,6 +77,8 @@ def photomaton_meta_loop(arm, config):
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handler)
+
     config = load_config()
 
     # Connect to robot

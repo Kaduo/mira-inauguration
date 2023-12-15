@@ -1,6 +1,6 @@
 enable_photomaton = true
 image_path = "data/st jerome.jpg" # Only has an effect if enable_photomaton is set to false
-robot_ip = "192.168.1.133"
+robot_ip = "192.168.1.207"
 
 [calibration]
 above_origin = [305, -60, 138]
