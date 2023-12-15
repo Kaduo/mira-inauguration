@@ -17,7 +17,7 @@ import time
 import pickle
 
 
-from xarm.wrapper import XArmAPI
+from xarm.xarm.wrapper import XArmAPI
 from utils import find_surface, absolute_coords, optimize_path, image_thresholding, sort_edges
 from numpy import linalg as LA
 from photo2drawing import grouping_edges, plot_edges, rgb2edges, rgb2edge_image, edge_image2edges
@@ -28,14 +28,17 @@ from dog_pipeline import rgb2dog_edges, rgb2dog_edge_image, dog_edge_image2edges
 
 import skimage as ski
 
+
 def process_frame(frame):
     res = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
     res = res[res.shape[0] // 2 :, :]
     return res
 
+
 def get_frame(cap):
     _, frame = cap.read()
     return process_frame(frame)
+
 
 def drawing_in_progress(edge_image):
     edge_image = np.array(edge_image, dtype=np.uint8) * 255
@@ -55,6 +58,7 @@ def drawing_in_progress(edge_image):
 
     cv2.imshow("MIRA", im)
     cv2.waitKey(1) & 0xFF
+
 
 def photomaton_loop(cap, waiting_time=100):
     selected = False
@@ -99,7 +103,6 @@ def photomaton_loop(cap, waiting_time=100):
             return
 
 
-
 cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
@@ -115,7 +118,7 @@ above_origin = np.array([305, -60, 138])
 above_p1 = np.array([435, -60, 138])
 above_p2 = np.array([305, 60, 138])
 
-frame = ski.io.imread('data/leccia.jpg')#photomaton_loop(cap, 0)
+frame = ski.io.imread("data/leccia.jpg")  # photomaton_loop(cap, 0)
 
 # edge_image = rgb2dog_edge_image(frame, low_sigma=1.07, p=10.1, thresh_technique="otsu")
 # edge_image = rgb2edge_image(frame, bilateral=False)
@@ -127,7 +130,7 @@ frame = ski.io.imread('data/leccia.jpg')#photomaton_loop(cap, 0)
 # ski.io.imsave("manual leccia.png", (edge_image*255).astype(np.uint8))
 
 edge_image = (ski.io.imread("manual leccia.png")).astype(bool)
-edges = edge_image2edges(edge_image, nb_edges = 1000)
+edges = edge_image2edges(edge_image, nb_edges=1000)
 
 drawing_in_progress(edge_image)
 
@@ -135,36 +138,35 @@ arm.motion_enable(enable=True)
 arm.set_mode(0)
 arm.set_state(state=0)
 
-origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon=[4,3,4])
+origin, p1, p2 = calibrate(arm, [above_origin, above_p1, above_p2], absolute_epsilon=[4, 3, 4])
 converter = CoordinatesConverter(list(reversed(edge_image.shape[:2])), origin, p1, p2)
 sorted_edges = sort_edges(edges)
 converted_edges = converter.convert_list_of_points(sorted_edges)
 
 
-shift_mira = np.array([0,10,0])
-origin_mira = origin+(3/4*(p2-origin)+15/16*(p1-origin)) - shift_mira
-p1_mira = origin_mira+1/16*(p1-origin)
-p2_mira = origin_mira+1/4*(p2-origin)
+shift_mira = np.array([0, 10, 0])
+origin_mira = origin + (3 / 4 * (p2 - origin) + 15 / 16 * (p1 - origin)) - shift_mira
+p1_mira = origin_mira + 1 / 16 * (p1 - origin)
+p2_mira = origin_mira + 1 / 4 * (p2 - origin)
 mira_image = [np.max(mira_data[1]), np.max(mira_data[0])]
 converterMIRA = CoordinatesConverter(mira_image, origin_mira, p1_mira, p2_mira)
 
 draw_edges(arm, converted_edges)
 
 for letter in mira_data:
-    
     points = converterMIRA.convert(letter)
     draw_edge(arm, points, speed=50, wait=True)
 
 
 print("shape", edge_image.shape)
 # for letter in mira_data:
-    # print("before", letter)
-    # letter *= edge_image.shape[0]
-    # letter /= 4
-    # letter[1] += 15*edge_image.shape[1]//16
-    # letter[0] += 3*edge_image.shape[0]//4
-    # letter = converter.convert(np.array(letter))
-    # draw_edge(arm, letter, wait=True, speed=50)
-    # print("after", letter)
+# print("before", letter)
+# letter *= edge_image.shape[0]
+# letter /= 4
+# letter[1] += 15*edge_image.shape[1]//16
+# letter[0] += 3*edge_image.shape[0]//4
+# letter = converter.convert(np.array(letter))
+# draw_edge(arm, letter, wait=True, speed=50)
+# print("after", letter)
 
-arm.set_position(x=0, y = 0, z=30, speed=100, wait=True, relative=True)
+arm.set_position(x=0, y=0, z=30, speed=100, wait=True, relative=True)
