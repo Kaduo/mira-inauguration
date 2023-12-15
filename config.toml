@@ -1,0 +1,35 @@
+enable_photomaton = true
+image_path = "data/st jerome.jpg" # Only has an effect if enable_photomaton is set to false
+robot_ip = "192.168.1.133"
+
+[calibration]
+above_origin = [305, -60, 138]
+above_p1 = [435, -60, 138]
+above_p2 = [305, 60, 138]
+epsilon = 0.1
+relative_epsilon = 0.2
+
+[photomaton]
+camera_index = 0
+recalibrate_every_time = false
+
+[photomaton.image_processing]
+crop = true
+
+[image_processing]
+edge_finding_method = "canny" # Either "canny" or "dog"
+
+[image_processing.dog]
+low_sigma = 0.9
+p = 1
+thresholding_method = "otsu" # Either "otsu", "mean" or "manual"
+threshold = 0.8 # Only has an effect if thresholding_technique is set to "manual"
+
+[image_processing.canny]
+thresholding_method = "otsu"
+
+[edge_processing]
+nb_edges = 700
+sort_edges = true
+min_edge_length = 10
+edge_step = 5
