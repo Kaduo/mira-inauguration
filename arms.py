@@ -65,7 +65,6 @@ def calibrate(arm, points, Rx=180, Ry=0, Rz=0, relative_epsilon=None, absolute_e
             )
 
     except TypeError:
-        print("what ??")
         if relative_epsilon is None:
             new_relative_epsilon = 0
         else:
@@ -169,7 +168,16 @@ def wait_for_input(password):
         continue
 
 
-def draw_edges(arm, edges, dz=2, verbose=True, speed=100, pause_at_edge_nb=None, pause_after=None, logging=False):
+def draw_edges(
+    arm,
+    edges,
+    dz=2,
+    verbose=True,
+    speed=100,
+    pause_at_edge_nb=None,
+    pause_after=None,
+    logging=False,
+):
     """
     Draw the edges in order.
 

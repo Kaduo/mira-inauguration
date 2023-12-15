@@ -53,7 +53,7 @@ class CoordinatesConverter:
                 (plane_short_length - plane_long_length / image_ratio) * 1 / 2
             )
 
-        else:
+        elif image_ratio < plane_ratio:
             print(image_ratio)
             print(plane_ratio)
             mat[image_short_idx] = plane_short_vec / image_short_length

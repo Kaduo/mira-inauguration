@@ -12,7 +12,7 @@ from itertools import cycle
 from fdog import difference_of_gaussians
 
 
-def rgb2edge_image(image, plot=False, bilateral=True):
+def rgb2edge_image(image, plot=False, bilateral=True, method="canny"):
     """
     Convert an RGB image into a binary image of its edges.
     """
@@ -21,11 +21,18 @@ def rgb2edge_image(image, plot=False, bilateral=True):
     except IndexError:
         gray_image = ski.color.rgb2gray(ski.color.rgba2rgb(image))
     if bilateral:
-        blurred_image = ski.restoration.denoise_bilateral(gray_image, sigma_color=0.05, sigma_spatial=1.5)
+        blurred_image = ski.restoration.denoise_bilateral(
+            gray_image, sigma_color=0.05, sigma_spatial=1.5
+        )
     else:
         blurred_image = gray_image
-    edge_image = ski.feature.canny(blurred_image)
-    skeletonized_image = 1 - skeletonize(edge_image)
+
+    if method == "canny":
+        edge_image = ski.feature.canny(blurred_image)
+        skeletonized_image = 1 - skeletonize(edge_image)
+
+    elif method == "dog":
+        print("TODO ! (:")
 
     if plot:
         _, ((ax1, ax2, ax3), (ax4, ax5, _)) = plt.subplots(2, 3)
@@ -51,8 +58,9 @@ def rgb2edges(
     plot_preprocessing=False,
     plot_result=False,
     return_edge_image=False,
+    method="canny",
 ):
-    edge_image = rgb2edge_image(image, plot_preprocessing)
+    edge_image = rgb2edge_image(image, plot_preprocessing, method=method)
 
     res = edge_image2edges(
         edge_image,

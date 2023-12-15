@@ -27,43 +27,46 @@ from coordinates import CoordinatesConverter
 
 import skimage as ski
 
+
 def process_frame(frame):
     res = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-    res = cv2.flip(res,1)
-    res = res[int(res.shape[0] // 2)-130 :, :]
+    res = cv2.flip(res, 1)
+    res = res[int(res.shape[0] // 2) - 130 :, :]
     return res
+
 
 def get_frame(cap):
     _, frame = cap.read()
     return process_frame(frame)
 
 
+img = cv2.imread("Data/cadre.png")
 
-img = cv2.imread("Data/cadre.png") 
 
 def show(image):
     logo = image
-    # importing image on which we are going to  
-    # apply watermark 
-    h_logo, w_logo, _ = logo.shape 
+    # importing image on which we are going to
+    # apply watermark
+    h_logo, w_logo, _ = logo.shape
 
-    # height and width of the image 
-    h_img, w_img, _ = img.shape 
-    center_y = int(h_img/2) 
-    center_x = int(w_img/2) 
-    
-    # calculating from top, bottom, right and left 
-    top_y = center_y - int(h_logo/2) -100
-    bottom_y = top_y + h_logo 
-    left_x = center_x - int(w_logo/2) 
-    right_x = left_x + w_logo 
-    destination = img[top_y:bottom_y, left_x:right_x] 
-    result = cv2.addWeighted(destination,0, logo, 1, 0) 
-    img[top_y:bottom_y, left_x:right_x] = result 
+    # height and width of the image
+    h_img, w_img, _ = img.shape
+    center_y = int(h_img / 2)
+    center_x = int(w_img / 2)
+
+    # calculating from top, bottom, right and left
+    top_y = center_y - int(h_logo / 2) - 100
+    bottom_y = top_y + h_logo
+    left_x = center_x - int(w_logo / 2)
+    right_x = left_x + w_logo
+    destination = img[top_y:bottom_y, left_x:right_x]
+    result = cv2.addWeighted(destination, 0, logo, 1, 0)
+    img[top_y:bottom_y, left_x:right_x] = result
     cv2.imshow("MIRA", img)
     key = cv2.waitKey(1) & 0xFF
     return key
-        
+
+
 def drawing_in_progress(edge_image):
     edge_image = np.array(edge_image, dtype=np.uint8) * 255
     edge_image = cv2.cvtColor(edge_image, cv2.COLOR_GRAY2BGR)
@@ -81,15 +84,15 @@ def drawing_in_progress(edge_image):
     )
     key = show(im)
 
+
 def photomaton_loop(cap, waiting_time=100):
     selected = False
     while not selected:
         frame = get_frame(cap)
-        
-        # height and width of the image 
+
+        # height and width of the image
         key = show(frame)
-       
-        
+
         if key == ord("c"):
             for i in range(waiting_time, 0, -1):
                 im = cv2.putText(
@@ -115,13 +118,8 @@ def photomaton_loop(cap, waiting_time=100):
             return
 
 
-cadre = cv2.imread('data/cadre.png')
-# cv2.imshow('cadre', cadre)
-# cv2.waitKey(0)
-
-# Close all windows
-# cv2.destroyAllWindows()
-h_cadre, w_cadre, _ = cadre.shape 
+cadre = cv2.imread("data/cadre.png")
+h_cadre, w_cadre, _ = cadre.shape
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
@@ -142,9 +140,9 @@ while True:
 
     edge_image = rgb2edge_image(frame, bilateral=False)
 
-    edge_image[15*edge_image.shape[0]//16:, 3*edge_image.shape[1]//4:] = True
+    edge_image[15 * edge_image.shape[0] // 16 :, 3 * edge_image.shape[1] // 4 :] = True
 
-    edges = edge_image2edges(edge_image, nb_edges = 700)
+    edges = edge_image2edges(edge_image, nb_edges=700)
 
     drawing_in_progress(edge_image)
 
@@ -160,29 +158,15 @@ while True:
 
     draw_edges(arm, converted_edges)
 
-    shift_mira = np.array([0,10,0])
-    origin_mira = origin+(3/4*(p2-origin)+15/16*(p1-origin)) - shift_mira
-    p1_mira = origin_mira+1/16*(p1-origin)
-    p2_mira = origin_mira+1/4*(p2-origin)
+    shift_mira = np.array([0, 10, 0])
+    origin_mira = origin + (3 / 4 * (p2 - origin) + 15 / 16 * (p1 - origin)) - shift_mira
+    p1_mira = origin_mira + 1 / 16 * (p1 - origin)
+    p2_mira = origin_mira + 1 / 4 * (p2 - origin)
     mira_image = [np.max(mira_data[1]), np.max(mira_data[0])]
     converterMIRA = CoordinatesConverter(mira_image, origin_mira, p1_mira, p2_mira)
 
-    
-
     for letter in mira_data:
-        
         points = converterMIRA.convert(letter)
         draw_edge(arm, points, speed=50, wait=True)
 
-    # print("shape", edge_image.shape)
-    # for letter in mira_data:
-    #     print("before", letter)
-    #     letter *= edge_image.shape[0]
-    #     letter /= 4
-    #     letter[1] += 15*edge_image.shape[1]//16
-    #     letter[0] += 3*edge_image.shape[0]//4
-    #     letter = converter.convert(np.array(letter))
-    #     draw_edge(arm, letter, wait=True, speed=50)
-    #     print("after", letter)
-    
-    arm.set_position(x=0, y = 0, z=30, speed=100, wait=True, relative=True)
+    arm.set_position(x=0, y=0, z=30, speed=100, wait=True, relative=True)
