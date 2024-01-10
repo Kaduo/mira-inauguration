@@ -20,8 +20,8 @@ python -m venv .venv
 
 L'activer (cette commande fonctionne pour bash/zsh, pas sous Windows) :
 
-```bash source
-.venv/bin/activate
+```bash
+source .venv/bin/activate
 ```
 
 Installer les dépendances :
