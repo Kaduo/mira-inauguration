@@ -17,9 +17,9 @@ import pickle
 
 
 from xarm.wrapper import XArmAPI
-from utils import find_surface, absolute_coords, optimize_path, image_thresholding, sort_edges
+from utils import sort_edges
 from numpy import linalg as LA
-from photo2drawing import grouping_edges, plot_edges, rgb2edges, rgb2edge_image, edge_image2edges
+from photo2drawing import rgb2edge_image, edge_image2edges
 from arms import get_photomaton_arm, calibrate, draw_edges, draw_edge
 from coordinates import CoordinatesConverter
 

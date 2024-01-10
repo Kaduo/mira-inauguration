@@ -12,9 +12,12 @@ import numpy as np
 
 import time
 import skimage as ski
+import tomllib
 
 
-def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, absolute_epsilon=1, relative_epsilon=0, verbose=True):
+def find_surface(
+    arm, x, y, z, Rx=180, Ry=0, Rz=0, absolute_epsilon=1, relative_epsilon=0, verbose=True
+):
     torques = []
     arm.set_position(
         x=x,
@@ -76,7 +79,10 @@ def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, absolute_epsilon=1, relative_
     maxs = np.max([test1_torques, test2_torques, test3_torques, initial_torques], axis=0)
     d = np.abs(maxs - mins)
     print(d)
-    boundaries = [mins - relative_epsilon*d - absolute_epsilon, maxs + relative_epsilon*d + absolute_epsilon]
+    boundaries = [
+        mins - relative_epsilon * d - absolute_epsilon,
+        maxs + relative_epsilon * d + absolute_epsilon,
+    ]
     print(boundaries)
     actual_torques = np.array(arm.joints_torque[0:6])
     arm.set_position(
@@ -117,7 +123,6 @@ def find_surface(arm, x, y, z, Rx=180, Ry=0, Rz=0, absolute_epsilon=1, relative_
         relative=False,
     )
     return pos, torques
-
 
 
 class absolute_coords:
@@ -174,7 +179,7 @@ def optimize_path(input_data, threshold):
 
 def sort_edges(edges):
     """Sort edges so as to minimize useless movements.
-    
+
     Argument:
 
     edges -- a list of edges, each of shape [nb_of_points, 2]
@@ -221,3 +226,7 @@ def image_thresholding(image):
     )
     hough_lines = np.array(hough_lines)
     return edge_image, hough_lines
+
+
+def get_config():
+    return tomllib.load("config.toml")
