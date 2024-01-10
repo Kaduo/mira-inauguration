@@ -37,7 +37,7 @@ def get_coordinates_converter(arm, config, image_shape):
     origin, p1, p2 = calibrate_from_config(arm, config)
 
     # Create converter
-    converter = CoordinatesConverter(image_shape, origin, p1, p2)
+    converter = CoordinatesConverter(list(reversed(image.shape[:2])), origin, p1, p2)
 
     return converter
 

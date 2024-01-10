@@ -38,7 +38,7 @@ class CoordinatesConverter:
         plane_short_vec = [e1, e2][plane_short_idx]
 
         image_ratio = image_long_length / image_short_length
-        plane_ratio = plane_long_length / plane_short_length
+        plane_ratio = plane_long_length / plane_short_length  # type: ignore
 
         shift = np.zeros((3, 1))
 
