@@ -10,7 +10,8 @@ import cv2
 
 
 def load_config():
-    return tomllib.load("config.toml")
+    with open("config.toml", "rb") as f:
+        return tomllib.load(f)
 
 
 def signal_handler(sig, frame):
@@ -31,12 +32,12 @@ def calibrate_from_config(arm, config):
     return origin, p1, p2
 
 
-def get_coordinates_converter(arm, config):
+def get_coordinates_converter(arm, config, image_shape):
     # Calibrate robot
     origin, p1, p2 = calibrate_from_config(arm, config)
 
     # Create converter
-    converter = CoordinatesConverter(origin, p1, p2)
+    converter = CoordinatesConverter(image_shape, origin, p1, p2)
 
     return converter
 
@@ -58,20 +59,18 @@ def edges_from_config(image, config):
 
 def draw_image(arm, image, config, converter=None):
     if converter is None:
-        converter = get_coordinates_converter(arm, config)
+        converter = get_coordinates_converter(arm, config, image.shape)
     edges = edges_from_config(image, config)
     converted_edges = converter.convert_list_of_points(edges)
     draw_edges(arm, converted_edges)
 
 
 def photomaton_meta_loop(arm, config):
-    # First calibration
-    if config["photomaton"]["recalibrate_every_time"]:
-        converter = None
-    else:
-        converter = get_coordinates_converter(arm, config)
     cap = cv2.VideoCapture(config["photomaton"]["camera_index"])
+    converter = None
     while True:
+        if config["photomaton"]["recalibrate_every_time"]:
+            converter = None
         image = photomaton_loop(cap)
         draw_image(arm, image, config, converter)
 
@@ -88,5 +87,5 @@ if __name__ == "__main__":
         photomaton_meta_loop(arm, config)
 
     else:
-        image = ski.load(config["image_path"])
+        image = ski.io.imread(config["image_path"])
         draw_image(arm, image, config)
