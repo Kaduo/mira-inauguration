@@ -6,7 +6,6 @@ Created on Wed Oct 25 17:45:49 2023
 @author: nicolas
 """
 
-import pandas as pd
 import cv2
 
 import numpy as np
