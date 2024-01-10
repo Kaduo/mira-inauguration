@@ -17,7 +17,7 @@ import time
 import pickle
 
 
-from xarm.xarm.wrapper import XArmAPI
+from xarm.wrapper import XArmAPI
 from utils import find_surface, absolute_coords, optimize_path, image_thresholding, sort_edges
 from numpy import linalg as LA
 from photo2drawing import grouping_edges, plot_edges, rgb2edges, rgb2edge_image, edge_image2edges
