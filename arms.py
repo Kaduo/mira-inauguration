@@ -2,7 +2,7 @@
 Functions that deal with calibrating and moving the robot arm.
 """
 
-from xarm.xarm.wrapper import XArmAPI
+from xarm.wrapper import XArmAPI
 from utils import find_surface
 import numpy as np
 from time import time
