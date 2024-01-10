@@ -6,10 +6,10 @@ Cloner ce dépot git :
 git clone https://github.com/Kaduo/mira-inauguration
 ```
 
-Aller sur la branche `big-cleanup` (expérimentale mais normalement plus simple d'utilisation) :
+Aller sur la branche `big_cleanup` (expérimentale mais normalement plus simple d'utilisation) :
 
 ```bash 
-git checkout big-cleanup
+git checkout big_cleanup
 ```
 
 Créer un environnement virtuel python :
