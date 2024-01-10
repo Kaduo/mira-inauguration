@@ -6,7 +6,7 @@ Cloner ce dépot git :
 
 Aller sur la branche `big-cleanup` (expérimentale mais normalement plus simple d'utilisation) :
 
-`bash git checkout big-cleanup`
+```bash git checkout big-cleanup```
 
 Créer un environnement virtuel python :
 
