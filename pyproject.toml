@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "drawing_arm"
+version = "0.1"
+dependencies = [
+    'xarm-python-sdk@git+https://github.com/xArm-Developer/xArm-Python-SDK',
+    'numpy',
+    'matplotlib',
+    'opencv-python',
+    'scikit-image',
+    'Pebble',
+]
+
+[tool.setuptools]
+py-modules = []
