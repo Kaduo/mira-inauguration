@@ -15,3 +15,5 @@ data/.DS_Store
 !mira_correct.pkl
 .venv/*
 *.txt
+build/*
+*.egg-info
